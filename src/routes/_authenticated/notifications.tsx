@@ -25,19 +25,19 @@ function NotificationsPage() {
       const [likes, comments, follows] = await Promise.all([
         supabase
           .from("likes")
-          .select("created_at, video_id, videos!inner(user_id), profiles!likes_user_id_fkey(username, avatar_url)")
+          .select("created_at, video_id, videos!inner(user_id), profiles!likes_user_id_profiles_fkey(username, avatar_url)")
           .eq("videos.user_id", meId)
           .order("created_at", { ascending: false })
           .limit(50),
         supabase
           .from("comments")
-          .select("created_at, video_id, content, videos!inner(user_id), profiles!comments_user_id_fkey(username, avatar_url)")
+          .select("created_at, video_id, content, videos!inner(user_id), profiles!comments_user_id_profiles_fkey(username, avatar_url)")
           .eq("videos.user_id", meId)
           .order("created_at", { ascending: false })
           .limit(50),
         supabase
           .from("follows")
-          .select("created_at, profiles!follows_follower_id_fkey(username, avatar_url)")
+          .select("created_at, profiles!follows_follower_profiles_fkey(username, avatar_url)")
           .eq("following_id", meId)
           .order("created_at", { ascending: false })
           .limit(50),

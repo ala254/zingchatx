@@ -31,7 +31,7 @@ function ExplorePage() {
     queryFn: async (): Promise<ExploreVideo[]> => {
       let query = supabase
         .from("videos")
-        .select("id, thumbnail_url, video_url, caption, hashtags, profiles!videos_user_id_fkey(username)")
+        .select("id, thumbnail_url, video_url, caption, hashtags, profiles!videos_user_id_profiles_fkey(username)")
         .order("created_at", { ascending: false })
         .limit(60);
       if (debounced) {

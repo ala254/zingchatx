@@ -30,7 +30,7 @@ export function CommentsSheet({
     setLoading(true);
     supabase
       .from("comments")
-      .select("id, content, created_at, user_id, profiles!comments_user_id_fkey(username, avatar_url)")
+      .select("id, content, created_at, user_id, profiles!comments_user_id_profiles_fkey(username, avatar_url)")
       .eq("video_id", videoId)
       .order("created_at", { ascending: false })
       .limit(100)
@@ -54,7 +54,7 @@ export function CommentsSheet({
     const { data, error } = await supabase
       .from("comments")
       .insert({ video_id: videoId, user_id: currentUserId, content: text.trim() })
-      .select("id, content, created_at, user_id, profiles!comments_user_id_fkey(username, avatar_url)")
+      .select("id, content, created_at, user_id, profiles!comments_user_id_profiles_fkey(username, avatar_url)")
       .single();
     setSending(false);
     if (error) return toast.error(error.message);

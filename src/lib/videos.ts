@@ -19,7 +19,7 @@ export type FeedVideo = {
 export async function fetchFeed(currentUserId: string | null): Promise<FeedVideo[]> {
   const { data, error } = await supabase
     .from("videos")
-    .select("id, user_id, video_url, thumbnail_url, caption, hashtags, location, created_at, profiles!videos_user_id_fkey(username, display_name, avatar_url)")
+    .select("id, user_id, video_url, thumbnail_url, caption, hashtags, location, created_at, profiles!videos_user_id_profiles_fkey(username, display_name, avatar_url)")
     .order("created_at", { ascending: false })
     .limit(50);
   if (error) throw error;
