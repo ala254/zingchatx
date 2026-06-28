@@ -1,6 +1,8 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useRef, useState } from "react";
+import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
+import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { takePendingCapture } from "@/lib/camera-capture-store";
+
 import { Upload, Video, X, Loader2, Hash, MapPin, Camera } from "lucide-react";
 import { toast } from "sonner";
 import { Route as AuthRoute } from "../_authenticated/route";
@@ -22,7 +24,13 @@ function UploadPage() {
   const [busy, setBusy] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const cameraInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    const f = takePendingCapture();
+    if (f) pickFile(f);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
 
   function pickFile(f: File | undefined | null) {
     if (!f) return;
