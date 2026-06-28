@@ -92,12 +92,18 @@ export function VideoCard({ video, active, currentUserId, onOpenComments }: Prop
         playsInline
         muted={false}
         preload={active ? "auto" : "metadata"}
+
+        onError={(e) => {
+          const err = (e.currentTarget as HTMLVideoElement).error;
+          console.error("video failed", video.id, err?.code, err?.message, video.video_url);
+        }}
         onTimeUpdate={(e) => {
           const t = e.currentTarget;
           if (t.duration) setProgress((t.currentTime / t.duration) * 100);
         }}
       />
       <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/30" />
+
 
       <div className="absolute inset-0" onClick={handleTap}>
         {paused && (

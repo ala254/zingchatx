@@ -5,6 +5,7 @@ import { Settings, LogOut, Grid3x3, Heart, Bookmark, Edit3 } from "lucide-react"
 import { useState } from "react";
 import { Route as AuthRoute } from "../_authenticated/route";
 import { useNavigate } from "@tanstack/react-router";
+import { signStorageUrls } from "@/lib/videos";
 
 export const Route = createFileRoute("/_authenticated/profile")({
   head: () => ({ meta: [{ title: "Profile — ZingChatX" }] }),
@@ -45,19 +46,25 @@ function MyProfilePage() {
   const { data: videos = [] } = useQuery({
     queryKey: ["my-videos", user!.id, tab],
     queryFn: async () => {
+      let rows: { id: string; thumbnail_url: string | null; video_url: string }[] = [];
       if (tab === "videos") {
         const { data } = await supabase
           .from("videos").select("id, thumbnail_url, video_url").eq("user_id", user!.id).order("created_at", { ascending: false });
-        return data ?? [];
-      }
-      if (tab === "likes") {
+        rows = data ?? [];
+      } else if (tab === "likes") {
         const { data } = await supabase
           .from("likes").select("video_id, videos!inner(id, thumbnail_url, video_url)").eq("user_id", user!.id);
-        return (data ?? []).map((r) => r.videos as { id: string; thumbnail_url: string | null; video_url: string });
+        rows = (data ?? []).map((r) => r.videos as { id: string; thumbnail_url: string | null; video_url: string });
+      } else {
+        const { data } = await supabase
+          .from("saves").select("video_id, videos!inner(id, thumbnail_url, video_url)").eq("user_id", user!.id);
+        rows = (data ?? []).map((r) => r.videos as { id: string; thumbnail_url: string | null; video_url: string });
       }
-      const { data } = await supabase
-        .from("saves").select("video_id, videos!inner(id, thumbnail_url, video_url)").eq("user_id", user!.id);
-      return (data ?? []).map((r) => r.videos as { id: string; thumbnail_url: string | null; video_url: string });
+      const [thumbs, vids] = await Promise.all([
+        signStorageUrls("thumbnails", rows.map((r) => r.thumbnail_url)),
+        signStorageUrls("videos", rows.map((r) => r.video_url)),
+      ]);
+      return rows.map((r, i) => ({ ...r, thumbnail_url: thumbs[i] ?? r.thumbnail_url, video_url: vids[i] ?? r.video_url }));
     },
   });
 

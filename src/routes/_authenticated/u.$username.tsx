@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { ArrowLeft, UserPlus, UserCheck } from "lucide-react";
 import { Route as AuthRoute } from "../_authenticated/route";
 import { toast } from "sonner";
+import { signStorageUrls } from "@/lib/videos";
 
 export const Route = createFileRoute("/_authenticated/u/$username")({
   head: ({ params }) => ({
@@ -50,7 +51,12 @@ function UserProfilePage() {
     queryFn: async () => {
       const { data } = await supabase
         .from("videos").select("id, thumbnail_url, video_url").eq("user_id", profile!.id).order("created_at", { ascending: false });
-      return data ?? [];
+      const rows = data ?? [];
+      const [thumbs, vids] = await Promise.all([
+        signStorageUrls("thumbnails", rows.map((r) => r.thumbnail_url)),
+        signStorageUrls("videos", rows.map((r) => r.video_url)),
+      ]);
+      return rows.map((r, i) => ({ ...r, thumbnail_url: thumbs[i] ?? r.thumbnail_url, video_url: vids[i] ?? r.video_url }));
     },
   });
 
