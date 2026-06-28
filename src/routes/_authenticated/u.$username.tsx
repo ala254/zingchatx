@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { ArrowLeft, UserPlus, UserCheck } from "lucide-react";
 import { Route as AuthRoute } from "../_authenticated/route";
 import { toast } from "sonner";
+import { signStorageUrls } from "@/lib/videos";
 
 export const Route = createFileRoute("/_authenticated/u/$username")({
   head: ({ params }) => ({
