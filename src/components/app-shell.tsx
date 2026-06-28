@@ -14,6 +14,11 @@ const tabs: Tab[] = [
 export function AppShell({ children }: { children: ReactNode }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const hideNav = pathname.startsWith("/feed"); // feed nav is overlaid; keep small floating bar
+  const fullscreen = pathname.startsWith("/camera");
+
+  if (fullscreen) {
+    return <div className="min-h-screen bg-black text-foreground">{children}</div>;
+  }
 
   return (
     <div className="relative min-h-screen bg-background text-foreground">
