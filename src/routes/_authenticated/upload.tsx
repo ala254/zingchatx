@@ -1,6 +1,8 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useRef, useState } from "react";
+import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
+import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { takePendingCapture } from "@/lib/camera-capture-store";
+
 import { Upload, Video, X, Loader2, Hash, MapPin, Camera } from "lucide-react";
 import { toast } from "sonner";
 import { Route as AuthRoute } from "../_authenticated/route";
@@ -22,7 +24,13 @@ function UploadPage() {
   const [busy, setBusy] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const cameraInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    const f = takePendingCapture();
+    if (f) pickFile(f);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
 
   function pickFile(f: File | undefined | null) {
     if (!f) return;
@@ -126,14 +134,14 @@ function UploadPage() {
               <p className="mt-1 text-xs text-muted-foreground">MP4 / MOV / WebM · up to 100MB</p>
             </div>
           </button>
-          <button
-            onClick={() => cameraInputRef.current?.click()}
+          <Link
+            to="/camera"
             className="flex w-full items-center justify-center gap-2 rounded-2xl border border-border bg-surface-elevated px-6 py-4 text-sm font-semibold"
           >
-            <Camera className="h-5 w-5" /> Record with camera
-          </button>
+            <Camera className="h-5 w-5" /> Open ZingCam
+          </Link>
           <input ref={fileInputRef} type="file" accept="video/*" className="hidden" onChange={(e) => pickFile(e.target.files?.[0])} />
-          <input ref={cameraInputRef} type="file" accept="video/*" capture="environment" className="hidden" onChange={(e) => pickFile(e.target.files?.[0])} />
+
         </div>
       ) : (
         <div className="mt-6 space-y-4">
