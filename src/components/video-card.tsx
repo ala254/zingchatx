@@ -92,7 +92,7 @@ export function VideoCard({ video, active, currentUserId, onOpenComments }: Prop
         playsInline
         muted={false}
         preload={active ? "auto" : "metadata"}
-        crossOrigin="anonymous"
+
         onError={(e) => {
           const err = (e.currentTarget as HTMLVideoElement).error;
           console.error("video failed", video.id, err?.code, err?.message, video.video_url);
