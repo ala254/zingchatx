@@ -51,7 +51,12 @@ function UserProfilePage() {
     queryFn: async () => {
       const { data } = await supabase
         .from("videos").select("id, thumbnail_url, video_url").eq("user_id", profile!.id).order("created_at", { ascending: false });
-      return data ?? [];
+      const rows = data ?? [];
+      const [thumbs, vids] = await Promise.all([
+        signStorageUrls("thumbnails", rows.map((r) => r.thumbnail_url)),
+        signStorageUrls("videos", rows.map((r) => r.video_url)),
+      ]);
+      return rows.map((r, i) => ({ ...r, thumbnail_url: thumbs[i] ?? r.thumbnail_url, video_url: vids[i] ?? r.video_url }));
     },
   });
 
