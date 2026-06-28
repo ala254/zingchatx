@@ -5,6 +5,7 @@ import { Settings, LogOut, Grid3x3, Heart, Bookmark, Edit3 } from "lucide-react"
 import { useState } from "react";
 import { Route as AuthRoute } from "../_authenticated/route";
 import { useNavigate } from "@tanstack/react-router";
+import { signStorageUrls } from "@/lib/videos";
 
 export const Route = createFileRoute("/_authenticated/profile")({
   head: () => ({ meta: [{ title: "Profile — ZingChatX" }] }),
