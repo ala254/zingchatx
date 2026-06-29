@@ -13,6 +13,7 @@ import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as VVideoIdRouteImport } from './routes/v.$videoId'
 import { Route as AuthenticatedUploadRouteImport } from './routes/_authenticated/upload'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
@@ -40,6 +41,11 @@ const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VVideoIdRoute = VVideoIdRouteImport.update({
+  id: '/v/$videoId',
+  path: '/v/$videoId',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedUploadRoute = AuthenticatedUploadRouteImport.update({
@@ -101,6 +107,7 @@ export interface FileRoutesByFullPath {
   '/profile': typeof AuthenticatedProfileRoute
   '/settings': typeof AuthenticatedSettingsRouteWithChildren
   '/upload': typeof AuthenticatedUploadRoute
+  '/v/$videoId': typeof VVideoIdRoute
   '/settings/edit-profile': typeof AuthenticatedSettingsEditProfileRoute
   '/u/$username': typeof AuthenticatedUUsernameRoute
 }
@@ -115,6 +122,7 @@ export interface FileRoutesByTo {
   '/profile': typeof AuthenticatedProfileRoute
   '/settings': typeof AuthenticatedSettingsRouteWithChildren
   '/upload': typeof AuthenticatedUploadRoute
+  '/v/$videoId': typeof VVideoIdRoute
   '/settings/edit-profile': typeof AuthenticatedSettingsEditProfileRoute
   '/u/$username': typeof AuthenticatedUUsernameRoute
 }
@@ -131,6 +139,7 @@ export interface FileRoutesById {
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRouteWithChildren
   '/_authenticated/upload': typeof AuthenticatedUploadRoute
+  '/v/$videoId': typeof VVideoIdRoute
   '/_authenticated/settings/edit-profile': typeof AuthenticatedSettingsEditProfileRoute
   '/_authenticated/u/$username': typeof AuthenticatedUUsernameRoute
 }
@@ -147,6 +156,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/settings'
     | '/upload'
+    | '/v/$videoId'
     | '/settings/edit-profile'
     | '/u/$username'
   fileRoutesByTo: FileRoutesByTo
@@ -161,6 +171,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/settings'
     | '/upload'
+    | '/v/$videoId'
     | '/settings/edit-profile'
     | '/u/$username'
   id:
@@ -176,6 +187,7 @@ export interface FileRouteTypes {
     | '/_authenticated/profile'
     | '/_authenticated/settings'
     | '/_authenticated/upload'
+    | '/v/$videoId'
     | '/_authenticated/settings/edit-profile'
     | '/_authenticated/u/$username'
   fileRoutesById: FileRoutesById
@@ -185,6 +197,7 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
+  VVideoIdRoute: typeof VVideoIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -215,6 +228,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/v/$videoId': {
+      id: '/v/$videoId'
+      path: '/v/$videoId'
+      fullPath: '/v/$videoId'
+      preLoaderRoute: typeof VVideoIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/upload': {
@@ -326,6 +346,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
   ResetPasswordRoute: ResetPasswordRoute,
+  VVideoIdRoute: VVideoIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
