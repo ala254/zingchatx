@@ -4,8 +4,10 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchFeed } from "@/lib/videos";
 import { VideoCard } from "@/components/video-card";
 import { CommentsSheet } from "@/components/comments-sheet";
+import { ShareSheet, type PlayerSettings } from "@/components/share-sheet";
 import { Sparkles, Loader2 } from "lucide-react";
 import { Route as AuthRoute } from "../_authenticated/route";
+import type { FeedVideo } from "@/lib/videos";
 
 export const Route = createFileRoute("/_authenticated/feed")({
   head: () => ({
@@ -16,6 +18,13 @@ export const Route = createFileRoute("/_authenticated/feed")({
   }),
   component: FeedPage,
 });
+
+const DEFAULT_SETTINGS: PlayerSettings = {
+  autoScroll: false,
+  clearDisplay: false,
+  dataSaver: false,
+  playbackSpeed: 1,
+};
 
 function FeedPage() {
   const { user } = AuthRoute.useRouteContext();
@@ -29,6 +38,8 @@ function FeedPage() {
 
   const [activeIndex, setActiveIndex] = useState(0);
   const [commentsFor, setCommentsFor] = useState<string | null>(null);
+  const [shareFor, setShareFor] = useState<FeedVideo | null>(null);
+  const [settings, setSettings] = useState<PlayerSettings>(DEFAULT_SETTINGS);
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -49,6 +60,13 @@ function FeedPage() {
     el.querySelectorAll("[data-index]").forEach((c) => observer.observe(c));
     return () => observer.disconnect();
   }, [videos.length]);
+
+  function scrollToIndex(i: number) {
+    const el = containerRef.current;
+    if (!el) return;
+    const target = el.querySelector(`[data-index="${i}"]`) as HTMLElement | null;
+    target?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
 
   return (
     <>
@@ -76,7 +94,10 @@ function FeedPage() {
                 video={v}
                 active={i === activeIndex}
                 currentUserId={userId}
+                settings={settings}
                 onOpenComments={setCommentsFor}
+                onOpenShare={setShareFor}
+                onEnded={() => scrollToIndex(i + 1)}
               />
             </div>
           ))
@@ -84,6 +105,13 @@ function FeedPage() {
       </div>
 
       <CommentsSheet videoId={commentsFor} currentUserId={userId} onClose={() => setCommentsFor(null)} />
+      <ShareSheet
+        video={shareFor}
+        currentUserId={userId}
+        settings={settings}
+        onSettingsChange={setSettings}
+        onClose={() => setShareFor(null)}
+      />
     </>
   );
 }
