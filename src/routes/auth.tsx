@@ -4,7 +4,8 @@ import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 import { toast } from "sonner";
-import { Sparkles, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
+import { ZingLogo } from "@/components/zing-logo";
 
 const searchSchema = z.object({
   mode: z.enum(["signin", "signup"]).optional(),
@@ -103,12 +104,15 @@ function AuthPage() {
     <div className="relative flex min-h-screen flex-col items-center justify-center px-6 py-12">
       <div className="pointer-events-none absolute inset-0 -z-10 opacity-70" style={{ background: "var(--gradient-glow)" }} />
 
-      <Link to="/feed" className="mb-10 flex items-center gap-2">
-        <div className="flex h-10 w-10 items-center justify-center rounded-2xl gradient-zing shadow-zing">
-          <Sparkles className="h-5 w-5 text-zing-foreground" />
+      <Link to="/feed" className="mb-10 flex flex-col items-center gap-3">
+        <div className="animate-logo-shimmer">
+          <ZingLogo size={72} />
         </div>
-        <span className="font-display text-2xl font-bold tracking-tight">
-          Zing<span className="text-gradient-zing">ChatX</span>
+        <span className="font-display text-3xl font-bold tracking-tight text-white">
+          Zing<span style={{ color: "#FF2D55" }}>ChatX</span>
+        </span>
+        <span className="text-[10px] font-medium uppercase tracking-[0.3em] text-muted-foreground">
+          Express · Connect · Inspire
         </span>
       </Link>
 

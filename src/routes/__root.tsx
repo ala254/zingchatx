@@ -74,7 +74,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
-      { name: "theme-color", content: "#0a0612" },
+      { name: "theme-color", content: "#0D0D0D" },
       { title: "ZingChatX — Short videos, big moments" },
       { name: "description", content: "ZingChatX is a vertical short-video network. Scroll, like, follow, and upload from anywhere." },
       { property: "og:title", content: "ZingChatX" },
@@ -88,8 +88,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap",
+        href: "https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap",
       },
+      { rel: "icon", type: "image/png", href: "/__l5e/assets-v1/b3496de0-7af5-44e1-996b-4e1762abd2f8/zingchatx-logo.png" },
     ],
   }),
   shellComponent: RootShell,

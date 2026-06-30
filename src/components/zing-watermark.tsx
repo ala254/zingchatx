@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Sparkles } from "lucide-react";
+import { ZING_LOGO_URL } from "./zing-logo";
 
 type Corner = "br" | "bl" | "tl" | "tr";
 
@@ -13,7 +13,7 @@ const CORNER_CLASS: Record<Corner, string> = {
 };
 
 /**
- * Always-on, non-removable watermark.
+ * Official ZingChatX watermark. Always-on, non-removable.
  * Cycles between the four corners every ~10s and fades during the move
  * to discourage screen recording / cropping.
  */
@@ -22,10 +22,8 @@ export function ZingWatermark({ username }: { username?: string | null }) {
   const [visible, setVisible] = useState(true);
 
   useEffect(() => {
-    // Random delay 8–12s before each move; brief fade-out, swap, fade-in.
     let moveTimer: number;
     let fadeTimer: number;
-
     const schedule = () => {
       const delay = 8000 + Math.random() * 4000;
       moveTimer = window.setTimeout(() => {
@@ -49,15 +47,21 @@ export function ZingWatermark({ username }: { username?: string | null }) {
   return (
     <div
       aria-hidden
-      className={`pointer-events-none absolute z-[5] flex select-none items-center gap-1.5 rounded-full bg-black/30 px-2.5 py-1 backdrop-blur-sm transition-all duration-700 ease-out ${CORNER_CLASS[corner]}`}
+      className={`pointer-events-none absolute z-[5] flex select-none items-center gap-1.5 rounded-full bg-black/40 px-2.5 py-1 backdrop-blur-sm transition-all duration-700 ease-out animate-watermark-float ${CORNER_CLASS[corner]}`}
       style={{
-        opacity: visible ? 0.42 : 0,
+        opacity: visible ? 0.45 : 0,
         transform: visible ? "scale(1)" : "scale(0.92)",
         willChange: "opacity, transform",
-        mixBlendMode: "screen",
       }}
     >
-      <Sparkles className="h-3 w-3 text-cyan-glow drop-shadow" />
+      <img
+        src={ZING_LOGO_URL}
+        alt=""
+        width={18}
+        height={18}
+        className="h-[18px] w-[18px] rounded-md object-cover"
+        draggable={false}
+      />
       <span className="font-display text-[11px] font-semibold tracking-tight text-white drop-shadow">
         ZingChatX
       </span>

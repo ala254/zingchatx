@@ -5,8 +5,9 @@
 @custom-variant dark (&:is(.dark *));
 
 /* ============================================================
- * ZingChatX Design System
- * Dark-first short-video app. Electric magenta + cyan accents.
+ * ZingChatX Official Brand Identity
+ * Hot Pink #FF2D55 · Deep Red #E6004C · Black · Dark Gray · White
+ * Typography: Poppins (display + body)
  * ============================================================ */
 
 @theme inline {
@@ -42,65 +43,65 @@
   --color-surface: var(--surface);
   --color-surface-elevated: var(--surface-elevated);
 
-  --font-display: "Space Grotesk", system-ui, sans-serif;
-  --font-sans: "Inter", system-ui, sans-serif;
+  --font-display: "Poppins", system-ui, sans-serif;
+  --font-sans: "Poppins", system-ui, sans-serif;
 }
 
 :root {
-  --radius: 0.875rem;
+  --radius: 1rem;
 
-  /* Dark by default for this app */
-  --background: oklch(0.08 0.015 290);
-  --foreground: oklch(0.98 0.005 285);
+  /* Dark-first official ZingChatX palette */
+  --background: #0D0D0D;          /* Near-black */
+  --foreground: #FFFFFF;
 
-  --surface: oklch(0.13 0.02 290);
-  --surface-elevated: oklch(0.17 0.025 290);
+  --surface: #1A1A1A;              /* Dark gray */
+  --surface-elevated: #242424;
 
-  --card: oklch(0.13 0.02 290);
-  --card-foreground: oklch(0.98 0.005 285);
-  --popover: oklch(0.15 0.025 290);
-  --popover-foreground: oklch(0.98 0.005 285);
+  --card: #1A1A1A;
+  --card-foreground: #FFFFFF;
+  --popover: #1A1A1A;
+  --popover-foreground: #FFFFFF;
 
-  --primary: oklch(0.68 0.27 350); /* electric magenta */
-  --primary-foreground: oklch(0.99 0 0);
+  --primary: #FF2D55;              /* Hot pink */
+  --primary-foreground: #FFFFFF;
 
-  --zing: oklch(0.68 0.27 350);
-  --zing-foreground: oklch(0.99 0 0);
-  --cyan-glow: oklch(0.82 0.18 195);
+  --zing: #FF2D55;
+  --zing-foreground: #FFFFFF;
+  --cyan-glow: #E6004C;            /* repurposed: deep red accent */
 
-  --secondary: oklch(0.22 0.03 290);
-  --secondary-foreground: oklch(0.98 0.005 285);
-  --muted: oklch(0.2 0.025 290);
-  --muted-foreground: oklch(0.68 0.02 285);
-  --accent: oklch(0.82 0.18 195); /* cyan */
-  --accent-foreground: oklch(0.12 0.02 290);
-  --destructive: oklch(0.65 0.24 25);
-  --destructive-foreground: oklch(0.99 0 0);
-  --border: oklch(0.25 0.02 290);
-  --input: oklch(0.22 0.025 290);
-  --ring: oklch(0.68 0.27 350);
+  --secondary: #1A1A1A;
+  --secondary-foreground: #FFFFFF;
+  --muted: #1A1A1A;
+  --muted-foreground: #8E8E93;
+  --accent: #E6004C;
+  --accent-foreground: #FFFFFF;
+  --destructive: #E6004C;
+  --destructive-foreground: #FFFFFF;
+  --border: #242424;
+  --input: #1A1A1A;
+  --ring: #FF2D55;
 
-  --gradient-zing: linear-gradient(135deg, oklch(0.68 0.27 350), oklch(0.7 0.24 320), oklch(0.82 0.18 195));
-  --gradient-glow: radial-gradient(circle at 30% 20%, oklch(0.68 0.27 350 / 0.35), transparent 60%);
-  --shadow-zing: 0 10px 40px -10px oklch(0.68 0.27 350 / 0.5);
-  --shadow-glow: 0 0 60px -10px oklch(0.82 0.18 195 / 0.4);
+  --gradient-zing: linear-gradient(135deg, #FF2D55 0%, #E6004C 100%);
+  --gradient-glow: radial-gradient(circle at 30% 20%, rgba(255, 45, 85, 0.35), transparent 60%);
+  --shadow-zing: 0 10px 40px -10px rgba(255, 45, 85, 0.55);
+  --shadow-glow: 0 0 60px -10px rgba(230, 0, 76, 0.45);
 }
 
 .light {
-  --background: oklch(0.99 0.003 285);
-  --foreground: oklch(0.12 0.02 290);
-  --surface: oklch(0.97 0.005 285);
-  --surface-elevated: oklch(1 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.12 0.02 290);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.12 0.02 290);
-  --secondary: oklch(0.95 0.01 285);
-  --secondary-foreground: oklch(0.12 0.02 290);
-  --muted: oklch(0.95 0.01 285);
-  --muted-foreground: oklch(0.45 0.02 285);
-  --border: oklch(0.9 0.01 285);
-  --input: oklch(0.94 0.01 285);
+  --background: #FFFFFF;
+  --foreground: #0D0D0D;
+  --surface: #F5F5F7;
+  --surface-elevated: #FFFFFF;
+  --card: #FFFFFF;
+  --card-foreground: #0D0D0D;
+  --popover: #FFFFFF;
+  --popover-foreground: #0D0D0D;
+  --secondary: #F5F5F7;
+  --secondary-foreground: #0D0D0D;
+  --muted: #F5F5F7;
+  --muted-foreground: #8E8E93;
+  --border: #E5E5EA;
+  --input: #F5F5F7;
 }
 
 @layer base {
@@ -117,6 +118,7 @@
   h1, h2, h3, .font-display {
     font-family: var(--font-display);
     letter-spacing: -0.02em;
+    font-weight: 700;
   }
 }
 
@@ -158,9 +160,26 @@
 }
 
 @keyframes pulse-glow {
-  0%, 100% { box-shadow: 0 0 0 0 oklch(0.68 0.27 350 / 0.5); }
-  50% { box-shadow: 0 0 0 12px oklch(0.68 0.27 350 / 0); }
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 45, 85, 0.55); }
+  50% { box-shadow: 0 0 0 14px rgba(255, 45, 85, 0); }
 }
 @utility animate-pulse-glow {
   animation: pulse-glow 2s ease-in-out infinite;
+}
+
+@keyframes watermark-float {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-2px) scale(1.02); }
+}
+@utility animate-watermark-float {
+  animation: watermark-float 3s ease-in-out infinite;
+}
+
+@keyframes logo-shimmer {
+  0% { filter: drop-shadow(0 0 0 rgba(255, 45, 85, 0.4)); }
+  50% { filter: drop-shadow(0 0 24px rgba(255, 45, 85, 0.7)); }
+  100% { filter: drop-shadow(0 0 0 rgba(255, 45, 85, 0.4)); }
+}
+@utility animate-logo-shimmer {
+  animation: logo-shimmer 2.4s ease-in-out infinite;
 }
