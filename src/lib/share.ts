@@ -260,6 +260,7 @@ async function renderOutro(
   w: number,
   h: number,
   watermarkText: string,
+  logoImg: HTMLImageElement | null,
 ): Promise<void> {
   const DURATION = 2000;
   const FADE = 500;
@@ -281,41 +282,47 @@ async function renderOutro(
             ? (DURATION - t) / FADE
             : 1;
 
-      // Solid black canvas
-      ctx.fillStyle = "#000";
+      // Solid black canvas (official ZingChatX outro background)
+      ctx.fillStyle = "#000000";
       ctx.fillRect(0, 0, w, h);
 
       ctx.globalAlpha = fade;
 
-      // Subtle radial glow behind logo for premium feel
+      // Brand radial glow (hot pink → deep red)
       const cx = w / 2;
       const cy = h / 2 - h * 0.06;
-      const glow = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.min(w, h) * 0.55);
-      glow.addColorStop(0, "rgba(236, 72, 153, 0.28)");
-      glow.addColorStop(0.55, "rgba(34, 211, 238, 0.10)");
+      const glow = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.min(w, h) * 0.6);
+      glow.addColorStop(0, "rgba(255, 45, 85, 0.32)");
+      glow.addColorStop(0.55, "rgba(230, 0, 76, 0.12)");
       glow.addColorStop(1, "rgba(0,0,0,0)");
       ctx.fillStyle = glow;
       ctx.fillRect(0, 0, w, h);
 
-      // ----- Logo mark: gradient rounded square with sparkle ------------
-      const logoSize = Math.round(Math.min(w, h) * 0.18);
+      // ----- Official ZingChatX logo ------------------------------------
+      const logoSize = Math.round(Math.min(w, h) * 0.26);
       const logoX = cx - logoSize / 2;
       const logoY = cy - logoSize / 2;
-      const logoR = logoSize * 0.26;
+      const logoR = logoSize * 0.22;
 
-      const lg = ctx.createLinearGradient(logoX, logoY, logoX + logoSize, logoY + logoSize);
-      lg.addColorStop(0, "#ec4899"); // electric magenta
-      lg.addColorStop(1, "#22d3ee"); // cyan glow
-      ctx.fillStyle = lg;
-      roundedRect(ctx, logoX, logoY, logoSize, logoSize, logoR);
-      ctx.fill();
-
-      // Sparkle glyph in white
-      drawSparkle(ctx, cx, cy, logoSize * 0.36);
+      if (logoImg) {
+        ctx.save();
+        roundedRect(ctx, logoX, logoY, logoSize, logoSize, logoR);
+        ctx.clip();
+        ctx.drawImage(logoImg, logoX, logoY, logoSize, logoSize);
+        ctx.restore();
+      } else {
+        // Fallback: brand gradient tile
+        const lg = ctx.createLinearGradient(logoX, logoY, logoX + logoSize, logoY + logoSize);
+        lg.addColorStop(0, "#FF2D55");
+        lg.addColorStop(1, "#E6004C");
+        ctx.fillStyle = lg;
+        roundedRect(ctx, logoX, logoY, logoSize, logoSize, logoR);
+        ctx.fill();
+      }
 
       // ----- "ZingChatX" wordmark --------------------------------------
       const titleSize = Math.max(28, Math.round(Math.min(w, h) * 0.07));
-      ctx.font = `700 ${titleSize}px "Space Grotesk", system-ui, sans-serif`;
+      ctx.font = `700 ${titleSize}px Poppins, system-ui, sans-serif`;
       ctx.textAlign = "center";
       ctx.textBaseline = "top";
       ctx.fillStyle = "#ffffff";
@@ -323,7 +330,7 @@ async function renderOutro(
 
       // ----- "Watch more on ZingChatX" tagline -------------------------
       const tagSize = Math.max(16, Math.round(titleSize * 0.42));
-      ctx.font = `500 ${tagSize}px Inter, system-ui, sans-serif`;
+      ctx.font = `500 ${tagSize}px Poppins, system-ui, sans-serif`;
       ctx.fillStyle = "rgba(255,255,255,0.72)";
       ctx.fillText(
         "Watch more on ZingChatX",
@@ -333,10 +340,10 @@ async function renderOutro(
 
       // ----- Creator handle bottom-right -------------------------------
       const handleSize = Math.max(14, Math.round(Math.min(w, h) * 0.028));
-      ctx.font = `600 ${handleSize}px Inter, system-ui, sans-serif`;
+      ctx.font = `600 ${handleSize}px Poppins, system-ui, sans-serif`;
       ctx.textAlign = "right";
       ctx.textBaseline = "bottom";
-      ctx.fillStyle = "rgba(255,255,255,0.85)";
+      ctx.fillStyle = "#FF2D55";
       const pad = Math.round(Math.min(w, h) * 0.04);
       ctx.fillText(watermarkText, w - pad, h - pad);
 
