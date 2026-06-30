@@ -116,23 +116,79 @@ export async function renderWatermarkedVideo(
     recorder.onstop = () => resolve(new Blob(chunks, { type: mime }));
   });
 
+  // Burned-in watermark rotates through four corners every ~10s, matching
+  // the on-screen overlay. Fades during transitions so it cannot be cropped.
+  const corners: Array<"br" | "bl" | "tr" | "tl"> = ["br", "bl", "tr", "tl"];
+  const CYCLE_MS = 10_000;
+  const FADE_MS = 600;
+  const startedAt = performance.now();
+
   let raf = 0;
   const draw = () => {
     ctx.drawImage(src, 0, 0, w, h);
-    // watermark — bottom right
-    const pad = Math.round(w * 0.025);
+
+    const elapsed = performance.now() - startedAt;
+    const stage = Math.floor(elapsed / CYCLE_MS) % corners.length;
+    const intoStage = elapsed % CYCLE_MS;
+    const fade =
+      intoStage > CYCLE_MS - FADE_MS
+        ? 1 - (intoStage - (CYCLE_MS - FADE_MS)) / FADE_MS
+        : intoStage < FADE_MS
+          ? intoStage / FADE_MS
+          : 1;
+    const corner = corners[stage];
+
+    const pad = Math.round(w * 0.03);
     const fontSize = Math.max(18, Math.round(w * 0.035));
+    const subSize = Math.round(fontSize * 0.65);
+    const lineGap = 4;
+
+    // Measure for pill background
     ctx.font = `600 ${fontSize}px "Space Grotesk", system-ui, sans-serif`;
-    ctx.textBaseline = "bottom";
-    ctx.textAlign = "right";
-    ctx.shadowColor = "rgba(0,0,0,0.6)";
-    ctx.shadowBlur = 8;
-    ctx.fillStyle = "rgba(255,255,255,0.85)";
-    ctx.fillText("ZingChatX", w - pad, h - pad);
-    ctx.fillStyle = "rgba(255,255,255,0.7)";
-    ctx.font = `500 ${Math.round(fontSize * 0.65)}px Inter, system-ui, sans-serif`;
-    ctx.fillText(watermarkText, w - pad, h - pad - fontSize - 4);
+    const mainText = "✦ ZingChatX";
+    const subText = watermarkText;
+    const mainW = ctx.measureText(mainText).width;
+    ctx.font = `500 ${subSize}px Inter, system-ui, sans-serif`;
+    const subW = ctx.measureText(subText).width;
+    const boxW = Math.max(mainW, subW) + pad;
+    const boxH = fontSize + subSize + lineGap + pad * 0.7;
+
+    const x = corner === "br" || corner === "tr" ? w - pad - boxW : pad;
+    const y = corner === "br" || corner === "bl" ? h - pad - boxH : pad;
+
+    ctx.globalAlpha = 0.42 * fade;
+
+    // Pill background
+    ctx.fillStyle = "rgba(0,0,0,0.55)";
+    const r = boxH / 2;
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.lineTo(x + boxW - r, y);
+    ctx.quadraticCurveTo(x + boxW, y, x + boxW, y + r);
+    ctx.lineTo(x + boxW, y + boxH - r);
+    ctx.quadraticCurveTo(x + boxW, y + boxH, x + boxW - r, y + boxH);
+    ctx.lineTo(x + r, y + boxH);
+    ctx.quadraticCurveTo(x, y + boxH, x, y + boxH - r);
+    ctx.lineTo(x, y + r);
+    ctx.quadraticCurveTo(x, y, x + r, y);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.textBaseline = "top";
+    ctx.textAlign = "left";
+    ctx.shadowColor = "rgba(0,0,0,0.55)";
+    ctx.shadowBlur = 6;
+
+    ctx.font = `600 ${fontSize}px "Space Grotesk", system-ui, sans-serif`;
+    ctx.fillStyle = "rgba(255,255,255,0.95)";
+    ctx.fillText(mainText, x + pad / 2, y + pad * 0.35);
+
+    ctx.font = `500 ${subSize}px Inter, system-ui, sans-serif`;
+    ctx.fillStyle = "rgba(255,255,255,0.9)";
+    ctx.fillText(subText, x + pad / 2, y + pad * 0.35 + fontSize + lineGap);
+
     ctx.shadowBlur = 0;
+    ctx.globalAlpha = 1;
     raf = requestAnimationFrame(draw);
   };
 
