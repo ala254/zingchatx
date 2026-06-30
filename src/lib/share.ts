@@ -1,5 +1,23 @@
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { ZING_LOGO_URL } from "@/components/zing-logo";
+
+/** Lazy-loaded official ZingChatX logo for canvas drawing. */
+let _logoImg: HTMLImageElement | null = null;
+function loadLogo(): Promise<HTMLImageElement> {
+  if (_logoImg && _logoImg.complete && _logoImg.naturalWidth > 0)
+    return Promise.resolve(_logoImg);
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.onload = () => {
+      _logoImg = img;
+      resolve(img);
+    };
+    img.onerror = () => reject(new Error("Logo load failed"));
+    img.src = ZING_LOGO_URL;
+  });
+}
 
 export type ShareDestination =
   | "native"
