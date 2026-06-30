@@ -201,9 +201,151 @@ export async function renderWatermarkedVideo(
     src.onended = () => resolve();
   });
   cancelAnimationFrame(raf);
-  recorder.stop();
   src.pause();
+
+  // ---- 2-second branded outro (solid black, fades in/out) -----------------
+  await renderOutro(ctx, w, h, watermarkText);
+
+  recorder.stop();
   return done;
+}
+
+/** Draws a 2s branded end card onto the canvas; resolves when complete. */
+async function renderOutro(
+  ctx: CanvasRenderingContext2D,
+  w: number,
+  h: number,
+  watermarkText: string,
+): Promise<void> {
+  const DURATION = 2000;
+  const FADE = 500;
+  const start = performance.now();
+
+  return new Promise<void>((resolve) => {
+    let raf = 0;
+    const tick = () => {
+      const t = performance.now() - start;
+      if (t >= DURATION) {
+        cancelAnimationFrame(raf);
+        resolve();
+        return;
+      }
+      const fade =
+        t < FADE
+          ? t / FADE
+          : t > DURATION - FADE
+            ? (DURATION - t) / FADE
+            : 1;
+
+      // Solid black canvas
+      ctx.fillStyle = "#000";
+      ctx.fillRect(0, 0, w, h);
+
+      ctx.globalAlpha = fade;
+
+      // Subtle radial glow behind logo for premium feel
+      const cx = w / 2;
+      const cy = h / 2 - h * 0.06;
+      const glow = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.min(w, h) * 0.55);
+      glow.addColorStop(0, "rgba(236, 72, 153, 0.28)");
+      glow.addColorStop(0.55, "rgba(34, 211, 238, 0.10)");
+      glow.addColorStop(1, "rgba(0,0,0,0)");
+      ctx.fillStyle = glow;
+      ctx.fillRect(0, 0, w, h);
+
+      // ----- Logo mark: gradient rounded square with sparkle ------------
+      const logoSize = Math.round(Math.min(w, h) * 0.18);
+      const logoX = cx - logoSize / 2;
+      const logoY = cy - logoSize / 2;
+      const logoR = logoSize * 0.26;
+
+      const lg = ctx.createLinearGradient(logoX, logoY, logoX + logoSize, logoY + logoSize);
+      lg.addColorStop(0, "#ec4899"); // electric magenta
+      lg.addColorStop(1, "#22d3ee"); // cyan glow
+      ctx.fillStyle = lg;
+      roundedRect(ctx, logoX, logoY, logoSize, logoSize, logoR);
+      ctx.fill();
+
+      // Sparkle glyph in white
+      drawSparkle(ctx, cx, cy, logoSize * 0.36);
+
+      // ----- "ZingChatX" wordmark --------------------------------------
+      const titleSize = Math.max(28, Math.round(Math.min(w, h) * 0.07));
+      ctx.font = `700 ${titleSize}px "Space Grotesk", system-ui, sans-serif`;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "top";
+      ctx.fillStyle = "#ffffff";
+      ctx.fillText("ZingChatX", cx, logoY + logoSize + titleSize * 0.45);
+
+      // ----- "Watch more on ZingChatX" tagline -------------------------
+      const tagSize = Math.max(16, Math.round(titleSize * 0.42));
+      ctx.font = `500 ${tagSize}px Inter, system-ui, sans-serif`;
+      ctx.fillStyle = "rgba(255,255,255,0.72)";
+      ctx.fillText(
+        "Watch more on ZingChatX",
+        cx,
+        logoY + logoSize + titleSize * 1.7,
+      );
+
+      // ----- Creator handle bottom-right -------------------------------
+      const handleSize = Math.max(14, Math.round(Math.min(w, h) * 0.028));
+      ctx.font = `600 ${handleSize}px Inter, system-ui, sans-serif`;
+      ctx.textAlign = "right";
+      ctx.textBaseline = "bottom";
+      ctx.fillStyle = "rgba(255,255,255,0.85)";
+      const pad = Math.round(Math.min(w, h) * 0.04);
+      ctx.fillText(watermarkText, w - pad, h - pad);
+
+      ctx.globalAlpha = 1;
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+  });
+}
+
+function roundedRect(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+  r: number,
+) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.lineTo(x + w - r, y);
+  ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+  ctx.lineTo(x + w, y + h - r);
+  ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+  ctx.lineTo(x + r, y + h);
+  ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+  ctx.lineTo(x, y + r);
+  ctx.quadraticCurveTo(x, y, x + r, y);
+  ctx.closePath();
+}
+
+/** 4-point sparkle glyph centered at (cx, cy). */
+function drawSparkle(ctx: CanvasRenderingContext2D, cx: number, cy: number, size: number) {
+  ctx.save();
+  ctx.fillStyle = "#ffffff";
+  ctx.beginPath();
+  // Vertical diamond
+  ctx.moveTo(cx, cy - size);
+  ctx.quadraticCurveTo(cx + size * 0.18, cy, cx, cy + size);
+  ctx.quadraticCurveTo(cx - size * 0.18, cy, cx, cy - size);
+  // Horizontal diamond
+  ctx.moveTo(cx - size, cy);
+  ctx.quadraticCurveTo(cx, cy - size * 0.18, cx + size, cy);
+  ctx.quadraticCurveTo(cx, cy + size * 0.18, cx - size, cy);
+  ctx.fill();
+  // Small accent dots
+  ctx.globalAlpha *= 0.85;
+  const d = size * 0.18;
+  ctx.beginPath();
+  ctx.arc(cx + size * 0.85, cy - size * 0.85, d, 0, Math.PI * 2);
+  ctx.arc(cx - size * 0.85, cy + size * 0.85, d * 0.7, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
 }
 
 export function downloadBlob(blob: Blob, filename: string): void {
