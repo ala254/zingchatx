@@ -1,11 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Settings, LogOut, Grid3x3, Heart, Bookmark, Edit3 } from "lucide-react";
-import { useState } from "react";
+import { Settings, LogOut, Grid3x3, Heart, Bookmark, Edit3, BadgeCheck } from "lucide-react";
+import { useEffect, useState } from "react";
 import { Route as AuthRoute } from "../_authenticated/route";
 import { useNavigate } from "@tanstack/react-router";
 import { signStorageUrls } from "@/lib/videos";
+import { UserAvatar } from "@/components/user-avatar";
 
 export const Route = createFileRoute("/_authenticated/profile")({
   head: () => ({ meta: [{ title: "Profile — ZingChatX" }] }),
