@@ -110,10 +110,10 @@ function MyProfilePage() {
         <div className="mt-5 flex gap-8">
           {profile?.username ? (
             <>
-              <Link to="/u/$username/following" params={{ username: profile.username }}>
+              <Link to="/u/$username/$kind" params={{ username: profile.username, kind: "following" }}>
                 <Stat label="Following" value={counts?.following ?? 0} />
               </Link>
-              <Link to="/u/$username/followers" params={{ username: profile.username }}>
+              <Link to="/u/$username/$kind" params={{ username: profile.username, kind: "followers" }}>
                 <Stat label="Followers" value={counts?.followers ?? 0} />
               </Link>
             </>

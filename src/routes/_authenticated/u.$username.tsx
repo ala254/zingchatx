@@ -124,10 +124,10 @@ function UserProfilePage() {
         {profile.bio && <p className="mt-1 max-w-xs text-center text-sm text-muted-foreground">{profile.bio}</p>}
 
         <div className="mt-4 flex gap-8">
-          <Link to="/u/$username/following" params={{ username: profile.username }}>
+          <Link to="/u/$username/$kind" params={{ username: profile.username, kind: "following" }}>
             <Stat label="Following" value={stats?.following ?? 0} />
           </Link>
-          <Link to="/u/$username/followers" params={{ username: profile.username }}>
+          <Link to="/u/$username/$kind" params={{ username: profile.username, kind: "followers" }}>
             <Stat label="Followers" value={stats?.followers ?? 0} />
           </Link>
           <Stat label="Likes" value={stats?.likes ?? 0} />
