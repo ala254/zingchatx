@@ -96,13 +96,9 @@ function ExplorePage() {
                 params={{ username: u.username }}
                 className="flex items-center gap-3 rounded-2xl px-3 py-2 hover:bg-surface"
               >
-                <div className="h-10 w-10 overflow-hidden rounded-full bg-secondary">
-                  {u.avatar_url ? <img src={u.avatar_url} alt="" className="h-full w-full object-cover" /> : (
-                    <div className="flex h-full w-full items-center justify-center text-sm font-bold">{u.username[0].toUpperCase()}</div>
-                  )}
-                </div>
+                <UserAvatar username={u.username} avatarUrl={u.avatar_url} verified={u.verified} size="md" linkTo={false} />
                 <div>
-                  <p className="text-sm font-semibold">@{u.username}</p>
+                  <p className="flex items-center gap-1 text-sm font-semibold">@{u.username}</p>
                   {u.display_name && <p className="text-xs text-muted-foreground">{u.display_name}</p>}
                 </div>
               </Link>
