@@ -19,6 +19,7 @@ function UserProfilePage() {
   const { username } = Route.useParams();
   const { user } = AuthRoute.useRouteContext();
   const meId = user!.id;
+  const queryClient = useQueryClient();
 
   const { data: profile, isLoading } = useQuery({
     queryKey: ["user", username],
@@ -30,22 +31,39 @@ function UserProfilePage() {
     },
   });
 
-  const { data: stats, refetch: refetchStats } = useQuery({
+  const { data: stats } = useQuery({
     queryKey: ["user-stats", profile?.id, meId],
     enabled: !!profile,
     queryFn: async () => {
-      const [followers, following, isFollowing] = await Promise.all([
+      const [followers, following, isFollowing, likesAgg] = await Promise.all([
         supabase.from("follows").select("*", { count: "exact", head: true }).eq("following_id", profile!.id),
         supabase.from("follows").select("*", { count: "exact", head: true }).eq("follower_id", profile!.id),
         supabase.from("follows").select("follower_id").eq("follower_id", meId).eq("following_id", profile!.id).maybeSingle(),
+        supabase.from("likes").select("video_id, videos!inner(user_id)", { count: "exact", head: true }).eq("videos.user_id", profile!.id),
       ]);
       return {
         followers: followers.count ?? 0,
         following: following.count ?? 0,
+        likes: likesAgg.count ?? 0,
         isFollowing: !!isFollowing.data,
       };
     },
   });
+
+  // Realtime: profile edits and follow changes for this user
+  useEffect(() => {
+    if (!profile) return;
+    const ch = supabase
+      .channel(`user-${profile.id}`)
+      .on("postgres_changes", { event: "*", schema: "public", table: "profiles", filter: `id=eq.${profile.id}` },
+        () => queryClient.invalidateQueries({ queryKey: ["user", username] }))
+      .on("postgres_changes", { event: "*", schema: "public", table: "follows", filter: `following_id=eq.${profile.id}` },
+        () => queryClient.invalidateQueries({ queryKey: ["user-stats", profile.id, meId] }))
+      .on("postgres_changes", { event: "*", schema: "public", table: "follows", filter: `follower_id=eq.${profile.id}` },
+        () => queryClient.invalidateQueries({ queryKey: ["user-stats", profile.id, meId] }))
+      .subscribe();
+    return () => { supabase.removeChannel(ch); };
+  }, [profile, username, meId, queryClient]);
 
   const { data: videos = [] } = useQuery({
     queryKey: ["user-videos", profile?.id],
@@ -64,14 +82,24 @@ function UserProfilePage() {
 
   async function toggleFollow() {
     if (!profile) return;
-    if (profile.id === meId) return;
-    if (stats?.isFollowing) {
-      await supabase.from("follows").delete().eq("follower_id", meId).eq("following_id", profile.id);
+    if (profile.id === meId) return toast.error("You can't follow yourself");
+    const wasFollowing = !!stats?.isFollowing;
+    // optimistic
+    queryClient.setQueryData(["user-stats", profile.id, meId], (prev: typeof stats) =>
+      prev ? { ...prev, isFollowing: !wasFollowing, followers: prev.followers + (wasFollowing ? -1 : 1) } : prev);
+    if (wasFollowing) {
+      const { error } = await supabase.from("follows").delete().eq("follower_id", meId).eq("following_id", profile.id);
+      if (error) {
+        toast.error(error.message);
+        queryClient.invalidateQueries({ queryKey: ["user-stats", profile.id, meId] });
+      }
     } else {
       const { error } = await supabase.from("follows").insert({ follower_id: meId, following_id: profile.id });
-      if (error) return toast.error(error.message);
+      if (error) {
+        if (!/duplicate/i.test(error.message)) toast.error(error.message);
+        queryClient.invalidateQueries({ queryKey: ["user-stats", profile.id, meId] });
+      }
     }
-    refetchStats();
   }
 
   if (isLoading || !profile) {
@@ -84,25 +112,25 @@ function UserProfilePage() {
     <div className="mx-auto max-w-[480px] px-4 pt-4">
       <div className="flex items-center gap-2">
         <Link to="/explore" className="rounded-full p-2 hover:bg-surface"><ArrowLeft className="h-5 w-5" /></Link>
-        <h1 className="font-display text-lg font-bold">@{profile.username}</h1>
+        <h1 className="flex items-center gap-1 font-display text-lg font-bold">
+          @{profile.username}
+          {profile.verified && <BadgeCheck className="h-5 w-5 text-primary" strokeWidth={2.5} />}
+        </h1>
       </div>
 
       <div className="mt-4 flex flex-col items-center">
-        <div className="h-24 w-24 overflow-hidden rounded-full border-2 border-border bg-surface">
-          {profile.avatar_url ? (
-            <img src={profile.avatar_url} alt="" className="h-full w-full object-cover" />
-          ) : (
-            <div className="flex h-full w-full items-center justify-center font-display text-3xl font-bold text-gradient-zing">
-              {profile.username[0].toUpperCase()}
-            </div>
-          )}
-        </div>
+        <UserAvatar username={profile.username} avatarUrl={profile.avatar_url} verified={profile.verified} size="2xl" linkTo={false} />
         <p className="mt-3 font-display text-lg font-semibold">{profile.display_name ?? profile.username}</p>
         {profile.bio && <p className="mt-1 max-w-xs text-center text-sm text-muted-foreground">{profile.bio}</p>}
 
         <div className="mt-4 flex gap-8">
-          <Stat label="Following" value={stats?.following ?? 0} />
-          <Stat label="Followers" value={stats?.followers ?? 0} />
+          <Link to="/u/$username/following" params={{ username: profile.username }}>
+            <Stat label="Following" value={stats?.following ?? 0} />
+          </Link>
+          <Link to="/u/$username/followers" params={{ username: profile.username }}>
+            <Stat label="Followers" value={stats?.followers ?? 0} />
+          </Link>
+          <Stat label="Likes" value={stats?.likes ?? 0} />
           <Stat label="Videos" value={videos.length} />
         </div>
 
