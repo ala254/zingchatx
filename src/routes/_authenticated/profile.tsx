@@ -16,7 +16,22 @@ export const Route = createFileRoute("/_authenticated/profile")({
 function MyProfilePage() {
   const { user } = AuthRoute.useRouteContext();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [tab, setTab] = useState<"videos" | "likes" | "saved">("videos");
+
+  // Realtime: refresh profile + counts when my profile or my follows change.
+  useEffect(() => {
+    const ch = supabase
+      .channel(`me-${user!.id}`)
+      .on("postgres_changes", { event: "*", schema: "public", table: "profiles", filter: `id=eq.${user!.id}` },
+        () => queryClient.invalidateQueries({ queryKey: ["profile", user!.id] }))
+      .on("postgres_changes", { event: "*", schema: "public", table: "follows", filter: `following_id=eq.${user!.id}` },
+        () => queryClient.invalidateQueries({ queryKey: ["profile-counts", user!.id] }))
+      .on("postgres_changes", { event: "*", schema: "public", table: "follows", filter: `follower_id=eq.${user!.id}` },
+        () => queryClient.invalidateQueries({ queryKey: ["profile-counts", user!.id] }))
+      .subscribe();
+    return () => { supabase.removeChannel(ch); };
+  }, [user, queryClient]);
 
   const { data: profile } = useQuery({
     queryKey: ["profile", user!.id],
