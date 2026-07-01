@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { X, Send, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { UserAvatar } from "@/components/user-avatar";
 
 type Comment = {
   id: string;
@@ -99,15 +100,7 @@ export function CommentsSheet({
           ) : (
             comments.map((c) => (
               <div key={c.id} className="flex gap-3 py-3">
-                <div className="h-9 w-9 flex-shrink-0 overflow-hidden rounded-full bg-secondary">
-                  {c.profile?.avatar_url ? (
-                    <img src={c.profile.avatar_url} alt="" className="h-full w-full object-cover" />
-                  ) : (
-                    <div className="flex h-full w-full items-center justify-center text-sm font-bold">
-                      {c.profile?.username?.[0]?.toUpperCase() ?? "?"}
-                    </div>
-                  )}
-                </div>
+                <UserAvatar username={c.profile?.username} avatarUrl={c.profile?.avatar_url} size="sm" />
                 <div className="flex-1">
                   <p className="text-sm font-semibold">@{c.profile?.username}</p>
                   <p className="text-sm text-muted-foreground">{c.content}</p>

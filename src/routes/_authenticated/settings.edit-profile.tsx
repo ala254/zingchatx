@@ -4,6 +4,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { ArrowLeft, Loader2, Camera } from "lucide-react";
 import { toast } from "sonner";
 import { Route as AuthRoute } from "../_authenticated/route";
+import { UserAvatar } from "@/components/user-avatar";
+import { compressAvatar } from "@/lib/image";
 
 export const Route = createFileRoute("/_authenticated/settings/edit-profile")({
   head: () => ({ meta: [{ title: "Edit profile — ZingChatX" }] }),
@@ -17,6 +19,7 @@ function EditProfilePage() {
   const [displayName, setDisplayName] = useState("");
   const [bio, setBio] = useState("");
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
   const [busy, setBusy] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
@@ -33,13 +36,22 @@ function EditProfilePage() {
   async function handleAvatar(file: File | undefined | null) {
     if (!file || !user) return;
     if (!file.type.startsWith("image/")) return toast.error("Pick an image");
-    if (file.size > 5 * 1024 * 1024) return toast.error("Max 5 MB");
-    const ext = file.name.split(".").pop() || "jpg";
-    const path = `${user.id}/${crypto.randomUUID()}.${ext}`;
-    const { error } = await supabase.storage.from("avatars").upload(path, file, { contentType: file.type, upsert: true });
-    if (error) return toast.error(error.message);
-    const url = supabase.storage.from("avatars").getPublicUrl(path).data.publicUrl;
-    setAvatarUrl(url);
+    if (file.size > 10 * 1024 * 1024) return toast.error("Max 10 MB");
+    setUploading(true);
+    try {
+      const blob = await compressAvatar(file);
+      const path = `${user.id}/${crypto.randomUUID()}.jpg`;
+      const { error } = await supabase.storage
+        .from("avatars")
+        .upload(path, blob, { contentType: "image/jpeg", upsert: true });
+      if (error) throw error;
+      setAvatarUrl(path); // store storage path; signed at render time
+      toast.success("Photo updated");
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Upload failed");
+    } finally {
+      setUploading(false);
+    }
   }
 
   async function handleSave() {
@@ -66,19 +78,18 @@ function EditProfilePage() {
       </div>
 
       <div className="mt-6 flex flex-col items-center">
-        <button onClick={() => fileRef.current?.click()} className="relative">
-          <div className="h-24 w-24 overflow-hidden rounded-full border-2 border-border bg-surface">
-            {avatarUrl ? <img src={avatarUrl} alt="" className="h-full w-full object-cover" /> : (
-              <div className="flex h-full w-full items-center justify-center font-display text-3xl text-gradient-zing font-bold">
-                {(username[0] ?? "?").toUpperCase()}
-              </div>
+        <button onClick={() => fileRef.current?.click()} className="relative" disabled={uploading}>
+          <UserAvatar username={username || "?"} avatarUrl={avatarUrl} size="2xl" linkTo={false} />
+          <div className="absolute bottom-0 right-0 flex h-8 w-8 items-center justify-center rounded-full gradient-zing shadow-zing">
+            {uploading ? (
+              <Loader2 className="h-4 w-4 animate-spin text-zing-foreground" />
+            ) : (
+              <Camera className="h-4 w-4 text-zing-foreground" />
             )}
           </div>
-          <div className="absolute bottom-0 right-0 flex h-8 w-8 items-center justify-center rounded-full gradient-zing shadow-zing">
-            <Camera className="h-4 w-4 text-zing-foreground" />
-          </div>
         </button>
-        <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={(e) => handleAvatar(e.target.files?.[0])} />
+        <p className="mt-2 text-xs text-muted-foreground">Tap to change photo</p>
+        <input ref={fileRef} type="file" accept="image/*" capture="user" className="hidden" onChange={(e) => handleAvatar(e.target.files?.[0])} />
       </div>
 
       <div className="mt-6 space-y-3">

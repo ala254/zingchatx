@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Link } from "@tanstack/react-router";
 import { ZingWatermark } from "@/components/zing-watermark";
+import { UserAvatar } from "@/components/user-avatar";
 import type { PlayerSettings } from "@/components/share-sheet";
 
 interface Props {
@@ -177,17 +178,12 @@ export function VideoCard({
         <>
           {/* Right action rail */}
           <div className="absolute bottom-32 right-3 z-10 flex flex-col items-center gap-5">
-            <Link to="/u/$username" params={{ username: video.profile?.username ?? "" }} className="relative">
-              <div className="h-12 w-12 overflow-hidden rounded-full border-2 border-white bg-surface">
-                {video.profile?.avatar_url ? (
-                  <img src={video.profile.avatar_url} alt="" className="h-full w-full object-cover" />
-                ) : (
-                  <div className="flex h-full w-full items-center justify-center text-sm font-bold text-foreground">
-                    {video.profile?.username?.[0]?.toUpperCase() ?? "?"}
-                  </div>
-                )}
-              </div>
-            </Link>
+            <UserAvatar
+              username={video.profile?.username}
+              avatarUrl={video.profile?.avatar_url}
+              size="lg"
+              className="border-2 border-white rounded-full"
+            />
 
             <ActionBtn icon={Heart} label={formatCount(likeCount)} active={liked} onClick={toggleLike} fillWhenActive />
             <ActionBtn icon={MessageCircle} label={formatCount(video.comments_count)} onClick={() => onOpenComments(video.id)} />
