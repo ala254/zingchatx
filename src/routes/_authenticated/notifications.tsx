@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Heart, MessageCircle, UserPlus } from "lucide-react";
 import { Route as AuthRoute } from "../_authenticated/route";
 import { formatDistanceToNow } from "date-fns";
+import { UserAvatar } from "@/components/user-avatar";
 
 export const Route = createFileRoute("/_authenticated/notifications")({
   head: () => ({ meta: [{ title: "Notifications — ZingChatX" }] }),
