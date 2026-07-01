@@ -77,13 +77,7 @@ function NotificationsPage() {
               className="flex items-center gap-3 rounded-2xl px-3 py-3 hover:bg-surface"
             >
               <div className="relative">
-                <div className="h-11 w-11 overflow-hidden rounded-full bg-secondary">
-                  {n.from.avatar_url ? (
-                    <img src={n.from.avatar_url} alt="" className="h-full w-full object-cover" />
-                  ) : (
-                    <div className="flex h-full w-full items-center justify-center text-sm font-bold">{n.from.username[0].toUpperCase()}</div>
-                  )}
-                </div>
+                <UserAvatar username={n.from.username} avatarUrl={n.from.avatar_url} size="md" linkTo={false} />
                 <div className="absolute -bottom-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full gradient-zing">
                   {n.kind === "like" ? <Heart className="h-3 w-3 fill-white text-white" />
                     : n.kind === "comment" ? <MessageCircle className="h-3 w-3 text-white" />
