@@ -78,19 +78,18 @@ function EditProfilePage() {
       </div>
 
       <div className="mt-6 flex flex-col items-center">
-        <button onClick={() => fileRef.current?.click()} className="relative">
-          <div className="h-24 w-24 overflow-hidden rounded-full border-2 border-border bg-surface">
-            {avatarUrl ? <img src={avatarUrl} alt="" className="h-full w-full object-cover" /> : (
-              <div className="flex h-full w-full items-center justify-center font-display text-3xl text-gradient-zing font-bold">
-                {(username[0] ?? "?").toUpperCase()}
-              </div>
+        <button onClick={() => fileRef.current?.click()} className="relative" disabled={uploading}>
+          <UserAvatar username={username || "?"} avatarUrl={avatarUrl} size="2xl" linkTo={false} />
+          <div className="absolute bottom-0 right-0 flex h-8 w-8 items-center justify-center rounded-full gradient-zing shadow-zing">
+            {uploading ? (
+              <Loader2 className="h-4 w-4 animate-spin text-zing-foreground" />
+            ) : (
+              <Camera className="h-4 w-4 text-zing-foreground" />
             )}
           </div>
-          <div className="absolute bottom-0 right-0 flex h-8 w-8 items-center justify-center rounded-full gradient-zing shadow-zing">
-            <Camera className="h-4 w-4 text-zing-foreground" />
-          </div>
         </button>
-        <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={(e) => handleAvatar(e.target.files?.[0])} />
+        <p className="mt-2 text-xs text-muted-foreground">Tap to change photo</p>
+        <input ref={fileRef} type="file" accept="image/*" capture="user" className="hidden" onChange={(e) => handleAvatar(e.target.files?.[0])} />
       </div>
 
       <div className="mt-6 space-y-3">
