@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Link } from "@tanstack/react-router";
 import { ZingWatermark } from "@/components/zing-watermark";
+import { UserAvatar } from "@/components/user-avatar";
 import type { PlayerSettings } from "@/components/share-sheet";
 
 interface Props {
