@@ -4,6 +4,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { ArrowLeft, Loader2, Camera } from "lucide-react";
 import { toast } from "sonner";
 import { Route as AuthRoute } from "../_authenticated/route";
+import { UserAvatar } from "@/components/user-avatar";
+import { compressAvatar } from "@/lib/image";
 
 export const Route = createFileRoute("/_authenticated/settings/edit-profile")({
   head: () => ({ meta: [{ title: "Edit profile — ZingChatX" }] }),
@@ -17,6 +19,7 @@ function EditProfilePage() {
   const [displayName, setDisplayName] = useState("");
   const [bio, setBio] = useState("");
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
   const [busy, setBusy] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
@@ -33,13 +36,22 @@ function EditProfilePage() {
   async function handleAvatar(file: File | undefined | null) {
     if (!file || !user) return;
     if (!file.type.startsWith("image/")) return toast.error("Pick an image");
-    if (file.size > 5 * 1024 * 1024) return toast.error("Max 5 MB");
-    const ext = file.name.split(".").pop() || "jpg";
-    const path = `${user.id}/${crypto.randomUUID()}.${ext}`;
-    const { error } = await supabase.storage.from("avatars").upload(path, file, { contentType: file.type, upsert: true });
-    if (error) return toast.error(error.message);
-    const url = supabase.storage.from("avatars").getPublicUrl(path).data.publicUrl;
-    setAvatarUrl(url);
+    if (file.size > 10 * 1024 * 1024) return toast.error("Max 10 MB");
+    setUploading(true);
+    try {
+      const blob = await compressAvatar(file);
+      const path = `${user.id}/${crypto.randomUUID()}.jpg`;
+      const { error } = await supabase.storage
+        .from("avatars")
+        .upload(path, blob, { contentType: "image/jpeg", upsert: true });
+      if (error) throw error;
+      setAvatarUrl(path); // store storage path; signed at render time
+      toast.success("Photo updated");
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Upload failed");
+    } finally {
+      setUploading(false);
+    }
   }
 
   async function handleSave() {
