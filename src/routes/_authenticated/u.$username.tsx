@@ -1,10 +1,12 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { ArrowLeft, UserPlus, UserCheck } from "lucide-react";
+import { ArrowLeft, UserPlus, UserCheck, BadgeCheck } from "lucide-react";
 import { Route as AuthRoute } from "../_authenticated/route";
 import { toast } from "sonner";
 import { signStorageUrls } from "@/lib/videos";
+import { UserAvatar } from "@/components/user-avatar";
+import { useEffect } from "react";
 
 export const Route = createFileRoute("/_authenticated/u/$username")({
   head: ({ params }) => ({
