@@ -68,7 +68,7 @@ export async function fetchFeed(currentUserId: string | null): Promise<FeedVideo
   const [likes, comments, shares, myLikes, mySaves, videoUrls, thumbUrls] = await Promise.all([
     supabase.from("likes").select("video_id").in("video_id", ids),
     supabase.from("comments").select("video_id").in("video_id", ids),
-    supabase.from("shares").select("video_id").in("video_id", ids),
+    supabase.rpc("get_share_counts", { video_ids: ids }),
     currentUserId
       ? supabase.from("likes").select("video_id").in("video_id", ids).eq("user_id", currentUserId)
       : Promise.resolve({ data: [] as { video_id: string }[], error: null }),
@@ -84,7 +84,9 @@ export async function fetchFeed(currentUserId: string | null): Promise<FeedVideo
   const commentCount = new Map<string, number>();
   (comments.data ?? []).forEach((c) => commentCount.set(c.video_id, (commentCount.get(c.video_id) ?? 0) + 1));
   const shareCount = new Map<string, number>();
-  (shares.data ?? []).forEach((s) => shareCount.set(s.video_id, (shareCount.get(s.video_id) ?? 0) + 1));
+  ((shares.data ?? []) as Array<{ video_id: string; count: number }>).forEach((s) =>
+    shareCount.set(s.video_id, Number(s.count) ?? 0),
+  );
   const likedSet = new Set((myLikes.data ?? []).map((l) => l.video_id));
   const savedSet = new Set((mySaves.data ?? []).map((s) => s.video_id));
 
