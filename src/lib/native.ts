@@ -9,7 +9,7 @@
  * happens outside a native container.
  */
 import { Capacitor } from "@capacitor/core";
-import type { Router } from "@tanstack/react-router";
+import type { AnyRouter } from "@tanstack/react-router";
 
 export const isNative = (): boolean => {
   try {
@@ -20,7 +20,7 @@ export const isNative = (): boolean => {
 };
 
 /** Initialise native chrome (status bar, splash, back button, deep links). */
-export async function initNative(router: Router<never, never>): Promise<void> {
+export async function initNative(router: AnyRouter): Promise<void> {
   if (!isNative()) return;
 
   // Dynamic imports keep plugins out of the web bundle path.
