@@ -13,6 +13,7 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Toaster } from "@/components/ui/sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { initNative } from "@/lib/native";
 
 function NotFoundComponent() {
   return (
@@ -123,6 +124,8 @@ function RootComponent() {
       router.invalidate();
       if (event !== "SIGNED_OUT") queryClient.invalidateQueries();
     });
+    // Initialise Capacitor bridge (no-op on web).
+    void initNative(router);
     return () => sub.subscription.unsubscribe();
   }, [queryClient, router]);
 
