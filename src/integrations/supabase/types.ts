@@ -390,6 +390,13 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_share_counts: {
+        Args: { video_ids: string[] }
+        Returns: {
+          count: number
+          video_id: string
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
