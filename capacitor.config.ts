@@ -11,11 +11,14 @@ import type { CapacitorConfig } from "@capacitor/cli";
 const config: CapacitorConfig = {
   appId: "com.zingchatx.app",
   appName: "ZingChatX",
-  webDir: "dist",
-  bundledWebRuntime: false,
+  // TanStack Start is an SSR app — it does NOT produce a static `dist/`
+  // bundle that can be shipped inside the APK. Capacitor still requires a
+  // `webDir` at `cap sync` time, so we point it at a tiny shell folder that
+  // ships a single loading `index.html`. At runtime the WebView is redirected
+  // to the deployed SSR site via `server.url`, so the shell is never shown.
+  webDir: "capacitor-shell",
   server: {
-    // Point the native shell at the deployed ZingChatX site. When you publish
-    // in Lovable this can be swapped for your custom domain.
+    // Deployed ZingChatX site. Swap for your custom domain after publishing.
     url: "https://id-preview--92ffcfb6-01b6-4119-889d-4c6d0c7ded71.lovable.app",
     cleartext: false,
     androidScheme: "https",
