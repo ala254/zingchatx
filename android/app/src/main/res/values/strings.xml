@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">ZingChatX</string>
+    <string name="title_activity_main">ZingChatX</string>
+    <string name="package_name">com.zingchatx.app</string>
+    <string name="custom_url_scheme">com.zingchatx.app</string>
+</resources>
