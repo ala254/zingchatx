@@ -18,8 +18,7 @@ const config: CapacitorConfig = {
   // to the deployed SSR site via `server.url`, so the shell is never shown.
   webDir: "capacitor-shell",
   server: {
-    // Deployed ZingChatX site. Swap for your custom domain after publishing.
-    url: "https://id-preview--92ffcfb6-01b6-4119-889d-4c6d0c7ded71.lovable.app",
+    url: "https://zingchatx-your-next-viral-moment.vercel.app",
     cleartext: false,
     androidScheme: "https",
     allowNavigation: [
