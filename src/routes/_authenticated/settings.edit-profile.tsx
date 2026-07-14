@@ -35,8 +35,9 @@ function EditProfilePage() {
 
   async function handleAvatar(file: File | undefined | null) {
     if (!file || !user) return;
-    if (!file.type.startsWith("image/")) return toast.error("Pick an image");
-    if (file.size > 10 * 1024 * 1024) return toast.error("Max 10 MB");
+    const allowed = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
+    if (!allowed.includes(file.type)) return toast.error("Only JPG, PNG or WEBP");
+    if (file.size > 5 * 1024 * 1024) return toast.error("Max 5 MB");
     setUploading(true);
     try {
       const blob = await compressAvatar(file);

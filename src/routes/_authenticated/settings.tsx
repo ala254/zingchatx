@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ChevronRight, Bell, Lock, Globe, Trash2, Shield, User as UserIcon, KeyRound, LogOut } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "@tanstack/react-router";
-import { toast } from "sonner";
+import { useQueryClient } from "@tanstack/react-query";
 
 export const Route = createFileRoute("/_authenticated/settings")({
   head: () => ({ meta: [{ title: "Settings — ZingChatX" }] }),
@@ -11,20 +11,13 @@ export const Route = createFileRoute("/_authenticated/settings")({
 
 function SettingsPage() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   async function handleSignOut() {
+    await queryClient.cancelQueries();
+    queryClient.clear();
     await supabase.auth.signOut();
     navigate({ to: "/auth", replace: true });
-  }
-
-  async function handleResetPassword() {
-    const { data } = await supabase.auth.getUser();
-    if (!data.user?.email) return toast.error("No email on this account");
-    const { error } = await supabase.auth.resetPasswordForEmail(data.user.email, {
-      redirectTo: window.location.origin + "/reset-password",
-    });
-    if (error) toast.error(error.message);
-    else toast.success("Reset link sent to your email");
   }
 
   return (
@@ -33,19 +26,19 @@ function SettingsPage() {
 
       <Section title="Account">
         <Row icon={UserIcon} label="Edit profile" to="/settings/edit-profile" />
-        <Row icon={KeyRound} label="Change password" onClick={handleResetPassword} />
+        <Row icon={KeyRound} label="Change password" to="/settings/change-password" />
       </Section>
 
       <Section title="Preferences">
-        <Row icon={Bell} label="Notifications" hint="On" />
-        <Row icon={Globe} label="Language" hint="English" />
-        <Row icon={Lock} label="Privacy" hint="Public" />
-        <Row icon={Shield} label="Security" hint="—" />
+        <Row icon={Bell} label="Notifications" to="/settings/notifications" />
+        <Row icon={Globe} label="Language" to="/settings/language" />
+        <Row icon={Lock} label="Privacy" to="/settings/privacy" />
+        <Row icon={Shield} label="Security" to="/settings/security" />
       </Section>
 
       <Section title="Danger zone">
         <Row icon={LogOut} label="Sign out" onClick={handleSignOut} />
-        <Row icon={Trash2} label="Delete account" destructive onClick={() => toast("Contact support to delete your account")} />
+        <Row icon={Trash2} label="Delete account" destructive to="/settings/delete-account" />
       </Section>
 
       <p className="mt-8 text-center text-xs text-muted-foreground">ZingChatX · v0.1</p>
