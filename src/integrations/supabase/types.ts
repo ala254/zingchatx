@@ -173,31 +173,52 @@ export type Database = {
       }
       profiles: {
         Row: {
+          allow_messages_from: string
           avatar_url: string | null
           bio: string | null
           created_at: string
           display_name: string | null
           id: string
+          is_private: boolean
+          language: string
+          notify_comments: boolean
+          notify_follows: boolean
+          notify_likes: boolean
+          push_enabled: boolean
           updated_at: string
           username: string
           verified: boolean
         }
         Insert: {
+          allow_messages_from?: string
           avatar_url?: string | null
           bio?: string | null
           created_at?: string
           display_name?: string | null
           id: string
+          is_private?: boolean
+          language?: string
+          notify_comments?: boolean
+          notify_follows?: boolean
+          notify_likes?: boolean
+          push_enabled?: boolean
           updated_at?: string
           username: string
           verified?: boolean
         }
         Update: {
+          allow_messages_from?: string
           avatar_url?: string | null
           bio?: string | null
           created_at?: string
           display_name?: string | null
           id?: string
+          is_private?: boolean
+          language?: string
+          notify_comments?: boolean
+          notify_follows?: boolean
+          notify_likes?: boolean
+          push_enabled?: boolean
           updated_at?: string
           username?: string
           verified?: boolean
