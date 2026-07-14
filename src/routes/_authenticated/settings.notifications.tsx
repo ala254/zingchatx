@@ -25,7 +25,7 @@ function NotificationsPage() {
   async function toggle<K extends keyof typeof state>(key: K) {
     const next = { ...state, [key]: !state[key] };
     setState(next);
-    const { error } = await supabase.from("profiles").update({ [key]: next[key] }).eq("id", user!.id);
+    const { error } = await supabase.from("profiles").update({ [key]: next[key] } as never).eq("id", user!.id);
     if (error) { toast.error(error.message); setState(state); }
   }
 

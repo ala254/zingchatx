@@ -26,7 +26,7 @@ function PrivacyPage() {
   }, [user]);
 
   async function update(patch: Record<string, unknown>) {
-    const { error } = await supabase.from("profiles").update(patch).eq("id", user!.id);
+    const { error } = await supabase.from("profiles").update(patch as never).eq("id", user!.id);
     if (error) toast.error(error.message);
   }
 
