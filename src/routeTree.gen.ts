@@ -22,7 +22,13 @@ import { Route as AuthenticatedFeedRouteImport } from './routes/_authenticated/f
 import { Route as AuthenticatedExploreRouteImport } from './routes/_authenticated/explore'
 import { Route as AuthenticatedCameraRouteImport } from './routes/_authenticated/camera'
 import { Route as AuthenticatedUUsernameRouteImport } from './routes/_authenticated/u.$username'
+import { Route as AuthenticatedSettingsSecurityRouteImport } from './routes/_authenticated/settings.security'
+import { Route as AuthenticatedSettingsPrivacyRouteImport } from './routes/_authenticated/settings.privacy'
+import { Route as AuthenticatedSettingsNotificationsRouteImport } from './routes/_authenticated/settings.notifications'
+import { Route as AuthenticatedSettingsLanguageRouteImport } from './routes/_authenticated/settings.language'
 import { Route as AuthenticatedSettingsEditProfileRouteImport } from './routes/_authenticated/settings.edit-profile'
+import { Route as AuthenticatedSettingsDeleteAccountRouteImport } from './routes/_authenticated/settings.delete-account'
+import { Route as AuthenticatedSettingsChangePasswordRouteImport } from './routes/_authenticated/settings.change-password'
 import { Route as AuthenticatedUUsernameKindRouteImport } from './routes/_authenticated/u.$username.$kind'
 
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
@@ -90,10 +96,46 @@ const AuthenticatedUUsernameRoute = AuthenticatedUUsernameRouteImport.update({
   path: '/u/$username',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedSettingsSecurityRoute =
+  AuthenticatedSettingsSecurityRouteImport.update({
+    id: '/security',
+    path: '/security',
+    getParentRoute: () => AuthenticatedSettingsRoute,
+  } as any)
+const AuthenticatedSettingsPrivacyRoute =
+  AuthenticatedSettingsPrivacyRouteImport.update({
+    id: '/privacy',
+    path: '/privacy',
+    getParentRoute: () => AuthenticatedSettingsRoute,
+  } as any)
+const AuthenticatedSettingsNotificationsRoute =
+  AuthenticatedSettingsNotificationsRouteImport.update({
+    id: '/notifications',
+    path: '/notifications',
+    getParentRoute: () => AuthenticatedSettingsRoute,
+  } as any)
+const AuthenticatedSettingsLanguageRoute =
+  AuthenticatedSettingsLanguageRouteImport.update({
+    id: '/language',
+    path: '/language',
+    getParentRoute: () => AuthenticatedSettingsRoute,
+  } as any)
 const AuthenticatedSettingsEditProfileRoute =
   AuthenticatedSettingsEditProfileRouteImport.update({
     id: '/edit-profile',
     path: '/edit-profile',
+    getParentRoute: () => AuthenticatedSettingsRoute,
+  } as any)
+const AuthenticatedSettingsDeleteAccountRoute =
+  AuthenticatedSettingsDeleteAccountRouteImport.update({
+    id: '/delete-account',
+    path: '/delete-account',
+    getParentRoute: () => AuthenticatedSettingsRoute,
+  } as any)
+const AuthenticatedSettingsChangePasswordRoute =
+  AuthenticatedSettingsChangePasswordRouteImport.update({
+    id: '/change-password',
+    path: '/change-password',
     getParentRoute: () => AuthenticatedSettingsRoute,
   } as any)
 const AuthenticatedUUsernameKindRoute =
@@ -115,7 +157,13 @@ export interface FileRoutesByFullPath {
   '/settings': typeof AuthenticatedSettingsRouteWithChildren
   '/upload': typeof AuthenticatedUploadRoute
   '/v/$videoId': typeof VVideoIdRoute
+  '/settings/change-password': typeof AuthenticatedSettingsChangePasswordRoute
+  '/settings/delete-account': typeof AuthenticatedSettingsDeleteAccountRoute
   '/settings/edit-profile': typeof AuthenticatedSettingsEditProfileRoute
+  '/settings/language': typeof AuthenticatedSettingsLanguageRoute
+  '/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
+  '/settings/privacy': typeof AuthenticatedSettingsPrivacyRoute
+  '/settings/security': typeof AuthenticatedSettingsSecurityRoute
   '/u/$username': typeof AuthenticatedUUsernameRouteWithChildren
   '/u/$username/$kind': typeof AuthenticatedUUsernameKindRoute
 }
@@ -131,7 +179,13 @@ export interface FileRoutesByTo {
   '/settings': typeof AuthenticatedSettingsRouteWithChildren
   '/upload': typeof AuthenticatedUploadRoute
   '/v/$videoId': typeof VVideoIdRoute
+  '/settings/change-password': typeof AuthenticatedSettingsChangePasswordRoute
+  '/settings/delete-account': typeof AuthenticatedSettingsDeleteAccountRoute
   '/settings/edit-profile': typeof AuthenticatedSettingsEditProfileRoute
+  '/settings/language': typeof AuthenticatedSettingsLanguageRoute
+  '/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
+  '/settings/privacy': typeof AuthenticatedSettingsPrivacyRoute
+  '/settings/security': typeof AuthenticatedSettingsSecurityRoute
   '/u/$username': typeof AuthenticatedUUsernameRouteWithChildren
   '/u/$username/$kind': typeof AuthenticatedUUsernameKindRoute
 }
@@ -149,7 +203,13 @@ export interface FileRoutesById {
   '/_authenticated/settings': typeof AuthenticatedSettingsRouteWithChildren
   '/_authenticated/upload': typeof AuthenticatedUploadRoute
   '/v/$videoId': typeof VVideoIdRoute
+  '/_authenticated/settings/change-password': typeof AuthenticatedSettingsChangePasswordRoute
+  '/_authenticated/settings/delete-account': typeof AuthenticatedSettingsDeleteAccountRoute
   '/_authenticated/settings/edit-profile': typeof AuthenticatedSettingsEditProfileRoute
+  '/_authenticated/settings/language': typeof AuthenticatedSettingsLanguageRoute
+  '/_authenticated/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
+  '/_authenticated/settings/privacy': typeof AuthenticatedSettingsPrivacyRoute
+  '/_authenticated/settings/security': typeof AuthenticatedSettingsSecurityRoute
   '/_authenticated/u/$username': typeof AuthenticatedUUsernameRouteWithChildren
   '/_authenticated/u/$username/$kind': typeof AuthenticatedUUsernameKindRoute
 }
@@ -167,7 +227,13 @@ export interface FileRouteTypes {
     | '/settings'
     | '/upload'
     | '/v/$videoId'
+    | '/settings/change-password'
+    | '/settings/delete-account'
     | '/settings/edit-profile'
+    | '/settings/language'
+    | '/settings/notifications'
+    | '/settings/privacy'
+    | '/settings/security'
     | '/u/$username'
     | '/u/$username/$kind'
   fileRoutesByTo: FileRoutesByTo
@@ -183,7 +249,13 @@ export interface FileRouteTypes {
     | '/settings'
     | '/upload'
     | '/v/$videoId'
+    | '/settings/change-password'
+    | '/settings/delete-account'
     | '/settings/edit-profile'
+    | '/settings/language'
+    | '/settings/notifications'
+    | '/settings/privacy'
+    | '/settings/security'
     | '/u/$username'
     | '/u/$username/$kind'
   id:
@@ -200,7 +272,13 @@ export interface FileRouteTypes {
     | '/_authenticated/settings'
     | '/_authenticated/upload'
     | '/v/$videoId'
+    | '/_authenticated/settings/change-password'
+    | '/_authenticated/settings/delete-account'
     | '/_authenticated/settings/edit-profile'
+    | '/_authenticated/settings/language'
+    | '/_authenticated/settings/notifications'
+    | '/_authenticated/settings/privacy'
+    | '/_authenticated/settings/security'
     | '/_authenticated/u/$username'
     | '/_authenticated/u/$username/$kind'
   fileRoutesById: FileRoutesById
@@ -306,11 +384,53 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedUUsernameRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/settings/security': {
+      id: '/_authenticated/settings/security'
+      path: '/security'
+      fullPath: '/settings/security'
+      preLoaderRoute: typeof AuthenticatedSettingsSecurityRouteImport
+      parentRoute: typeof AuthenticatedSettingsRoute
+    }
+    '/_authenticated/settings/privacy': {
+      id: '/_authenticated/settings/privacy'
+      path: '/privacy'
+      fullPath: '/settings/privacy'
+      preLoaderRoute: typeof AuthenticatedSettingsPrivacyRouteImport
+      parentRoute: typeof AuthenticatedSettingsRoute
+    }
+    '/_authenticated/settings/notifications': {
+      id: '/_authenticated/settings/notifications'
+      path: '/notifications'
+      fullPath: '/settings/notifications'
+      preLoaderRoute: typeof AuthenticatedSettingsNotificationsRouteImport
+      parentRoute: typeof AuthenticatedSettingsRoute
+    }
+    '/_authenticated/settings/language': {
+      id: '/_authenticated/settings/language'
+      path: '/language'
+      fullPath: '/settings/language'
+      preLoaderRoute: typeof AuthenticatedSettingsLanguageRouteImport
+      parentRoute: typeof AuthenticatedSettingsRoute
+    }
     '/_authenticated/settings/edit-profile': {
       id: '/_authenticated/settings/edit-profile'
       path: '/edit-profile'
       fullPath: '/settings/edit-profile'
       preLoaderRoute: typeof AuthenticatedSettingsEditProfileRouteImport
+      parentRoute: typeof AuthenticatedSettingsRoute
+    }
+    '/_authenticated/settings/delete-account': {
+      id: '/_authenticated/settings/delete-account'
+      path: '/delete-account'
+      fullPath: '/settings/delete-account'
+      preLoaderRoute: typeof AuthenticatedSettingsDeleteAccountRouteImport
+      parentRoute: typeof AuthenticatedSettingsRoute
+    }
+    '/_authenticated/settings/change-password': {
+      id: '/_authenticated/settings/change-password'
+      path: '/change-password'
+      fullPath: '/settings/change-password'
+      preLoaderRoute: typeof AuthenticatedSettingsChangePasswordRouteImport
       parentRoute: typeof AuthenticatedSettingsRoute
     }
     '/_authenticated/u/$username/$kind': {
@@ -324,11 +444,26 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedSettingsRouteChildren {
+  AuthenticatedSettingsChangePasswordRoute: typeof AuthenticatedSettingsChangePasswordRoute
+  AuthenticatedSettingsDeleteAccountRoute: typeof AuthenticatedSettingsDeleteAccountRoute
   AuthenticatedSettingsEditProfileRoute: typeof AuthenticatedSettingsEditProfileRoute
+  AuthenticatedSettingsLanguageRoute: typeof AuthenticatedSettingsLanguageRoute
+  AuthenticatedSettingsNotificationsRoute: typeof AuthenticatedSettingsNotificationsRoute
+  AuthenticatedSettingsPrivacyRoute: typeof AuthenticatedSettingsPrivacyRoute
+  AuthenticatedSettingsSecurityRoute: typeof AuthenticatedSettingsSecurityRoute
 }
 
 const AuthenticatedSettingsRouteChildren: AuthenticatedSettingsRouteChildren = {
+  AuthenticatedSettingsChangePasswordRoute:
+    AuthenticatedSettingsChangePasswordRoute,
+  AuthenticatedSettingsDeleteAccountRoute:
+    AuthenticatedSettingsDeleteAccountRoute,
   AuthenticatedSettingsEditProfileRoute: AuthenticatedSettingsEditProfileRoute,
+  AuthenticatedSettingsLanguageRoute: AuthenticatedSettingsLanguageRoute,
+  AuthenticatedSettingsNotificationsRoute:
+    AuthenticatedSettingsNotificationsRoute,
+  AuthenticatedSettingsPrivacyRoute: AuthenticatedSettingsPrivacyRoute,
+  AuthenticatedSettingsSecurityRoute: AuthenticatedSettingsSecurityRoute,
 }
 
 const AuthenticatedSettingsRouteWithChildren =
@@ -385,13 +520,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
