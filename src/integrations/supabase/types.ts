@@ -14,6 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
+      coin_packs: {
+        Row: {
+          coins: number
+          created_at: string
+          currency: string
+          id: string
+          is_active: boolean
+          price_cents: number
+          sort_order: number
+          stripe_price_id: string | null
+        }
+        Insert: {
+          coins: number
+          created_at?: string
+          currency?: string
+          id?: string
+          is_active?: boolean
+          price_cents: number
+          sort_order?: number
+          stripe_price_id?: string | null
+        }
+        Update: {
+          coins?: number
+          created_at?: string
+          currency?: string
+          id?: string
+          is_active?: boolean
+          price_cents?: number
+          sort_order?: number
+          stripe_price_id?: string | null
+        }
+        Relationships: []
+      }
       comments: {
         Row: {
           content: string
@@ -112,6 +145,87 @@ export type Database = {
           },
         ]
       }
+      gift_sends: {
+        Row: {
+          coin_total: number
+          created_at: string
+          gift_id: string
+          host_id: string
+          id: string
+          quantity: number
+          sender_id: string
+          stream_id: string
+        }
+        Insert: {
+          coin_total: number
+          created_at?: string
+          gift_id: string
+          host_id: string
+          id?: string
+          quantity: number
+          sender_id: string
+          stream_id: string
+        }
+        Update: {
+          coin_total?: number
+          created_at?: string
+          gift_id?: string
+          host_id?: string
+          id?: string
+          quantity?: number
+          sender_id?: string
+          stream_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "gift_sends_gift_id_fkey"
+            columns: ["gift_id"]
+            isOneToOne: false
+            referencedRelation: "gifts_catalog"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "gift_sends_stream_id_fkey"
+            columns: ["stream_id"]
+            isOneToOne: false
+            referencedRelation: "live_streams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      gifts_catalog: {
+        Row: {
+          animation: string
+          coin_cost: number
+          created_at: string
+          glyph: string
+          id: string
+          is_active: boolean
+          name: string
+          sort_order: number
+        }
+        Insert: {
+          animation?: string
+          coin_cost: number
+          created_at?: string
+          glyph: string
+          id?: string
+          is_active?: boolean
+          name: string
+          sort_order?: number
+        }
+        Update: {
+          animation?: string
+          coin_cost?: number
+          created_at?: string
+          glyph?: string
+          id?: string
+          is_active?: boolean
+          name?: string
+          sort_order?: number
+        }
+        Relationships: []
+      }
       likes: {
         Row: {
           created_at: string
@@ -141,6 +255,284 @@ export type Database = {
             columns: ["video_id"]
             isOneToOne: false
             referencedRelation: "videos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      live_bans: {
+        Row: {
+          banned_by: string
+          created_at: string
+          reason: string | null
+          stream_id: string
+          user_id: string
+        }
+        Insert: {
+          banned_by: string
+          created_at?: string
+          reason?: string | null
+          stream_id: string
+          user_id: string
+        }
+        Update: {
+          banned_by?: string
+          created_at?: string
+          reason?: string | null
+          stream_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "live_bans_stream_id_fkey"
+            columns: ["stream_id"]
+            isOneToOne: false
+            referencedRelation: "live_streams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      live_comments: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          is_pinned: boolean
+          stream_id: string
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          is_pinned?: boolean
+          stream_id: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          is_pinned?: boolean
+          stream_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "live_comments_stream_id_fkey"
+            columns: ["stream_id"]
+            isOneToOne: false
+            referencedRelation: "live_streams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      live_hearts: {
+        Row: {
+          count: number
+          created_at: string
+          id: string
+          stream_id: string
+          user_id: string
+        }
+        Insert: {
+          count?: number
+          created_at?: string
+          id?: string
+          stream_id: string
+          user_id: string
+        }
+        Update: {
+          count?: number
+          created_at?: string
+          id?: string
+          stream_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "live_hearts_stream_id_fkey"
+            columns: ["stream_id"]
+            isOneToOne: false
+            referencedRelation: "live_streams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      live_moderators: {
+        Row: {
+          created_at: string
+          granted_by: string
+          stream_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          granted_by: string
+          stream_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          granted_by?: string
+          stream_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "live_moderators_stream_id_fkey"
+            columns: ["stream_id"]
+            isOneToOne: false
+            referencedRelation: "live_streams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      live_notifications: {
+        Row: {
+          created_at: string
+          follower_id: string
+          host_id: string
+          id: string
+          read_at: string | null
+          stream_id: string
+        }
+        Insert: {
+          created_at?: string
+          follower_id: string
+          host_id: string
+          id?: string
+          read_at?: string | null
+          stream_id: string
+        }
+        Update: {
+          created_at?: string
+          follower_id?: string
+          host_id?: string
+          id?: string
+          read_at?: string | null
+          stream_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "live_notifications_stream_id_fkey"
+            columns: ["stream_id"]
+            isOneToOne: false
+            referencedRelation: "live_streams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      live_reports: {
+        Row: {
+          created_at: string
+          id: string
+          reason: string
+          reported_user_id: string
+          reporter_id: string
+          stream_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          reason: string
+          reported_user_id: string
+          reporter_id: string
+          stream_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          reason?: string
+          reported_user_id?: string
+          reporter_id?: string
+          stream_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "live_reports_stream_id_fkey"
+            columns: ["stream_id"]
+            isOneToOne: false
+            referencedRelation: "live_streams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      live_streams: {
+        Row: {
+          agora_channel: string
+          created_at: string
+          ended_at: string | null
+          gifts_total_coins: number
+          host_id: string
+          id: string
+          likes_count: number
+          started_at: string
+          status: Database["public"]["Enums"]["live_status"]
+          thumbnail_url: string | null
+          title: string | null
+          updated_at: string
+          viewer_count: number
+          viewer_peak: number
+        }
+        Insert: {
+          agora_channel: string
+          created_at?: string
+          ended_at?: string | null
+          gifts_total_coins?: number
+          host_id: string
+          id?: string
+          likes_count?: number
+          started_at?: string
+          status?: Database["public"]["Enums"]["live_status"]
+          thumbnail_url?: string | null
+          title?: string | null
+          updated_at?: string
+          viewer_count?: number
+          viewer_peak?: number
+        }
+        Update: {
+          agora_channel?: string
+          created_at?: string
+          ended_at?: string | null
+          gifts_total_coins?: number
+          host_id?: string
+          id?: string
+          likes_count?: number
+          started_at?: string
+          status?: Database["public"]["Enums"]["live_status"]
+          thumbnail_url?: string | null
+          title?: string | null
+          updated_at?: string
+          viewer_count?: number
+          viewer_peak?: number
+        }
+        Relationships: []
+      }
+      live_viewers: {
+        Row: {
+          joined_at: string
+          left_at: string | null
+          stream_id: string
+          user_id: string
+        }
+        Insert: {
+          joined_at?: string
+          left_at?: string | null
+          stream_id: string
+          user_id: string
+        }
+        Update: {
+          joined_at?: string
+          left_at?: string | null
+          stream_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "live_viewers_stream_id_fkey"
+            columns: ["stream_id"]
+            isOneToOne: false
+            referencedRelation: "live_streams"
             referencedColumns: ["id"]
           },
         ]
@@ -406,11 +798,103 @@ export type Database = {
           },
         ]
       }
+      wallet_ledger: {
+        Row: {
+          created_at: string
+          delta_coins: number
+          id: string
+          kind: Database["public"]["Enums"]["ledger_kind"]
+          memo: string | null
+          ref_id: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          delta_coins: number
+          id?: string
+          kind: Database["public"]["Enums"]["ledger_kind"]
+          memo?: string | null
+          ref_id?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          delta_coins?: number
+          id?: string
+          kind?: Database["public"]["Enums"]["ledger_kind"]
+          memo?: string | null
+          ref_id?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      wallets: {
+        Row: {
+          coin_balance: number
+          earned_coins: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          coin_balance?: number
+          earned_coins?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          coin_balance?: number
+          earned_coins?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      withdrawal_requests: {
+        Row: {
+          amount_cents: number
+          coins: number
+          created_at: string
+          currency: string
+          destination: string | null
+          id: string
+          method: string | null
+          processed_at: string | null
+          status: Database["public"]["Enums"]["withdrawal_status"]
+          user_id: string
+        }
+        Insert: {
+          amount_cents: number
+          coins: number
+          created_at?: string
+          currency?: string
+          destination?: string | null
+          id?: string
+          method?: string | null
+          processed_at?: string | null
+          status?: Database["public"]["Enums"]["withdrawal_status"]
+          user_id: string
+        }
+        Update: {
+          amount_cents?: number
+          coins?: number
+          created_at?: string
+          currency?: string
+          destination?: string | null
+          id?: string
+          method?: string | null
+          processed_at?: string | null
+          status?: Database["public"]["Enums"]["withdrawal_status"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
+      end_live: { Args: { _stream_id: string }; Returns: undefined }
+      ensure_wallet: { Args: { _user_id: string }; Returns: undefined }
       get_share_counts: {
         Args: { video_ids: string[] }
         Returns: {
@@ -425,9 +909,31 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_live_staff: {
+        Args: { _stream_id: string; _user_id: string }
+        Returns: boolean
+      }
+      join_live: { Args: { _stream_id: string }; Returns: undefined }
+      leave_live: { Args: { _stream_id: string }; Returns: undefined }
+      record_heart_batch: {
+        Args: { _count: number; _stream_id: string }
+        Returns: undefined
+      }
+      send_gift: {
+        Args: { _gift_id: string; _quantity: number; _stream_id: string }
+        Returns: Json
+      }
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"
+      ledger_kind:
+        | "purchase"
+        | "gift_sent"
+        | "gift_received"
+        | "withdrawal"
+        | "adjustment"
+      live_status: "scheduled" | "live" | "ended"
+      withdrawal_status: "pending" | "approved" | "rejected" | "paid"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -556,6 +1062,15 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "moderator", "user"],
+      ledger_kind: [
+        "purchase",
+        "gift_sent",
+        "gift_received",
+        "withdrawal",
+        "adjustment",
+      ],
+      live_status: ["scheduled", "live", "ended"],
+      withdrawal_status: ["pending", "approved", "rejected", "paid"],
     },
   },
 } as const
