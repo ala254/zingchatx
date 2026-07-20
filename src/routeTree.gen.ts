@@ -14,6 +14,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as VVideoIdRouteImport } from './routes/v.$videoId'
+import { Route as AuthenticatedWalletRouteImport } from './routes/_authenticated/wallet'
 import { Route as AuthenticatedUploadRouteImport } from './routes/_authenticated/upload'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
@@ -30,6 +31,9 @@ import { Route as AuthenticatedSettingsLanguageRouteImport } from './routes/_aut
 import { Route as AuthenticatedSettingsEditProfileRouteImport } from './routes/_authenticated/settings.edit-profile'
 import { Route as AuthenticatedSettingsDeleteAccountRouteImport } from './routes/_authenticated/settings.delete-account'
 import { Route as AuthenticatedSettingsChangePasswordRouteImport } from './routes/_authenticated/settings.change-password'
+import { Route as AuthenticatedLiveHostRouteImport } from './routes/_authenticated/live.host'
+import { Route as AuthenticatedLiveStreamIdRouteImport } from './routes/_authenticated/live.$streamId'
+import { Route as ApiPublicWebhooksStripeRouteImport } from './routes/api/public/webhooks/stripe'
 import { Route as AuthenticatedUUsernameKindRouteImport } from './routes/_authenticated/u.$username.$kind'
 
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
@@ -55,6 +59,11 @@ const VVideoIdRoute = VVideoIdRouteImport.update({
   id: '/v/$videoId',
   path: '/v/$videoId',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedWalletRoute = AuthenticatedWalletRouteImport.update({
+  id: '/wallet',
+  path: '/wallet',
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedUploadRoute = AuthenticatedUploadRouteImport.update({
   id: '/upload',
@@ -144,6 +153,22 @@ const AuthenticatedSettingsChangePasswordRoute =
     path: '/change-password',
     getParentRoute: () => AuthenticatedSettingsRoute,
   } as any)
+const AuthenticatedLiveHostRoute = AuthenticatedLiveHostRouteImport.update({
+  id: '/host',
+  path: '/host',
+  getParentRoute: () => AuthenticatedLiveRoute,
+} as any)
+const AuthenticatedLiveStreamIdRoute =
+  AuthenticatedLiveStreamIdRouteImport.update({
+    id: '/$streamId',
+    path: '/$streamId',
+    getParentRoute: () => AuthenticatedLiveRoute,
+  } as any)
+const ApiPublicWebhooksStripeRoute = ApiPublicWebhooksStripeRouteImport.update({
+  id: '/api/public/webhooks/stripe',
+  path: '/api/public/webhooks/stripe',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedUUsernameKindRoute =
   AuthenticatedUUsernameKindRouteImport.update({
     id: '/$kind',
@@ -158,12 +183,15 @@ export interface FileRoutesByFullPath {
   '/camera': typeof AuthenticatedCameraRoute
   '/explore': typeof AuthenticatedExploreRoute
   '/feed': typeof AuthenticatedFeedRoute
-  '/live': typeof AuthenticatedLiveRoute
+  '/live': typeof AuthenticatedLiveRouteWithChildren
   '/notifications': typeof AuthenticatedNotificationsRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/settings': typeof AuthenticatedSettingsRouteWithChildren
   '/upload': typeof AuthenticatedUploadRoute
+  '/wallet': typeof AuthenticatedWalletRoute
   '/v/$videoId': typeof VVideoIdRoute
+  '/live/$streamId': typeof AuthenticatedLiveStreamIdRoute
+  '/live/host': typeof AuthenticatedLiveHostRoute
   '/settings/change-password': typeof AuthenticatedSettingsChangePasswordRoute
   '/settings/delete-account': typeof AuthenticatedSettingsDeleteAccountRoute
   '/settings/edit-profile': typeof AuthenticatedSettingsEditProfileRoute
@@ -173,6 +201,7 @@ export interface FileRoutesByFullPath {
   '/settings/security': typeof AuthenticatedSettingsSecurityRoute
   '/u/$username': typeof AuthenticatedUUsernameRouteWithChildren
   '/u/$username/$kind': typeof AuthenticatedUUsernameKindRoute
+  '/api/public/webhooks/stripe': typeof ApiPublicWebhooksStripeRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -181,12 +210,15 @@ export interface FileRoutesByTo {
   '/camera': typeof AuthenticatedCameraRoute
   '/explore': typeof AuthenticatedExploreRoute
   '/feed': typeof AuthenticatedFeedRoute
-  '/live': typeof AuthenticatedLiveRoute
+  '/live': typeof AuthenticatedLiveRouteWithChildren
   '/notifications': typeof AuthenticatedNotificationsRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/settings': typeof AuthenticatedSettingsRouteWithChildren
   '/upload': typeof AuthenticatedUploadRoute
+  '/wallet': typeof AuthenticatedWalletRoute
   '/v/$videoId': typeof VVideoIdRoute
+  '/live/$streamId': typeof AuthenticatedLiveStreamIdRoute
+  '/live/host': typeof AuthenticatedLiveHostRoute
   '/settings/change-password': typeof AuthenticatedSettingsChangePasswordRoute
   '/settings/delete-account': typeof AuthenticatedSettingsDeleteAccountRoute
   '/settings/edit-profile': typeof AuthenticatedSettingsEditProfileRoute
@@ -196,6 +228,7 @@ export interface FileRoutesByTo {
   '/settings/security': typeof AuthenticatedSettingsSecurityRoute
   '/u/$username': typeof AuthenticatedUUsernameRouteWithChildren
   '/u/$username/$kind': typeof AuthenticatedUUsernameKindRoute
+  '/api/public/webhooks/stripe': typeof ApiPublicWebhooksStripeRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -206,12 +239,15 @@ export interface FileRoutesById {
   '/_authenticated/camera': typeof AuthenticatedCameraRoute
   '/_authenticated/explore': typeof AuthenticatedExploreRoute
   '/_authenticated/feed': typeof AuthenticatedFeedRoute
-  '/_authenticated/live': typeof AuthenticatedLiveRoute
+  '/_authenticated/live': typeof AuthenticatedLiveRouteWithChildren
   '/_authenticated/notifications': typeof AuthenticatedNotificationsRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRouteWithChildren
   '/_authenticated/upload': typeof AuthenticatedUploadRoute
+  '/_authenticated/wallet': typeof AuthenticatedWalletRoute
   '/v/$videoId': typeof VVideoIdRoute
+  '/_authenticated/live/$streamId': typeof AuthenticatedLiveStreamIdRoute
+  '/_authenticated/live/host': typeof AuthenticatedLiveHostRoute
   '/_authenticated/settings/change-password': typeof AuthenticatedSettingsChangePasswordRoute
   '/_authenticated/settings/delete-account': typeof AuthenticatedSettingsDeleteAccountRoute
   '/_authenticated/settings/edit-profile': typeof AuthenticatedSettingsEditProfileRoute
@@ -221,6 +257,7 @@ export interface FileRoutesById {
   '/_authenticated/settings/security': typeof AuthenticatedSettingsSecurityRoute
   '/_authenticated/u/$username': typeof AuthenticatedUUsernameRouteWithChildren
   '/_authenticated/u/$username/$kind': typeof AuthenticatedUUsernameKindRoute
+  '/api/public/webhooks/stripe': typeof ApiPublicWebhooksStripeRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -236,7 +273,10 @@ export interface FileRouteTypes {
     | '/profile'
     | '/settings'
     | '/upload'
+    | '/wallet'
     | '/v/$videoId'
+    | '/live/$streamId'
+    | '/live/host'
     | '/settings/change-password'
     | '/settings/delete-account'
     | '/settings/edit-profile'
@@ -246,6 +286,7 @@ export interface FileRouteTypes {
     | '/settings/security'
     | '/u/$username'
     | '/u/$username/$kind'
+    | '/api/public/webhooks/stripe'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -259,7 +300,10 @@ export interface FileRouteTypes {
     | '/profile'
     | '/settings'
     | '/upload'
+    | '/wallet'
     | '/v/$videoId'
+    | '/live/$streamId'
+    | '/live/host'
     | '/settings/change-password'
     | '/settings/delete-account'
     | '/settings/edit-profile'
@@ -269,6 +313,7 @@ export interface FileRouteTypes {
     | '/settings/security'
     | '/u/$username'
     | '/u/$username/$kind'
+    | '/api/public/webhooks/stripe'
   id:
     | '__root__'
     | '/'
@@ -283,7 +328,10 @@ export interface FileRouteTypes {
     | '/_authenticated/profile'
     | '/_authenticated/settings'
     | '/_authenticated/upload'
+    | '/_authenticated/wallet'
     | '/v/$videoId'
+    | '/_authenticated/live/$streamId'
+    | '/_authenticated/live/host'
     | '/_authenticated/settings/change-password'
     | '/_authenticated/settings/delete-account'
     | '/_authenticated/settings/edit-profile'
@@ -293,6 +341,7 @@ export interface FileRouteTypes {
     | '/_authenticated/settings/security'
     | '/_authenticated/u/$username'
     | '/_authenticated/u/$username/$kind'
+    | '/api/public/webhooks/stripe'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -301,6 +350,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   VVideoIdRoute: typeof VVideoIdRoute
+  ApiPublicWebhooksStripeRoute: typeof ApiPublicWebhooksStripeRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -339,6 +389,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/v/$videoId'
       preLoaderRoute: typeof VVideoIdRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/wallet': {
+      id: '/_authenticated/wallet'
+      path: '/wallet'
+      fullPath: '/wallet'
+      preLoaderRoute: typeof AuthenticatedWalletRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/upload': {
       id: '/_authenticated/upload'
@@ -452,6 +509,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSettingsChangePasswordRouteImport
       parentRoute: typeof AuthenticatedSettingsRoute
     }
+    '/_authenticated/live/host': {
+      id: '/_authenticated/live/host'
+      path: '/host'
+      fullPath: '/live/host'
+      preLoaderRoute: typeof AuthenticatedLiveHostRouteImport
+      parentRoute: typeof AuthenticatedLiveRoute
+    }
+    '/_authenticated/live/$streamId': {
+      id: '/_authenticated/live/$streamId'
+      path: '/$streamId'
+      fullPath: '/live/$streamId'
+      preLoaderRoute: typeof AuthenticatedLiveStreamIdRouteImport
+      parentRoute: typeof AuthenticatedLiveRoute
+    }
+    '/api/public/webhooks/stripe': {
+      id: '/api/public/webhooks/stripe'
+      path: '/api/public/webhooks/stripe'
+      fullPath: '/api/public/webhooks/stripe'
+      preLoaderRoute: typeof ApiPublicWebhooksStripeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/u/$username/$kind': {
       id: '/_authenticated/u/$username/$kind'
       path: '/$kind'
@@ -461,6 +539,19 @@ declare module '@tanstack/react-router' {
     }
   }
 }
+
+interface AuthenticatedLiveRouteChildren {
+  AuthenticatedLiveStreamIdRoute: typeof AuthenticatedLiveStreamIdRoute
+  AuthenticatedLiveHostRoute: typeof AuthenticatedLiveHostRoute
+}
+
+const AuthenticatedLiveRouteChildren: AuthenticatedLiveRouteChildren = {
+  AuthenticatedLiveStreamIdRoute: AuthenticatedLiveStreamIdRoute,
+  AuthenticatedLiveHostRoute: AuthenticatedLiveHostRoute,
+}
+
+const AuthenticatedLiveRouteWithChildren =
+  AuthenticatedLiveRoute._addFileChildren(AuthenticatedLiveRouteChildren)
 
 interface AuthenticatedSettingsRouteChildren {
   AuthenticatedSettingsChangePasswordRoute: typeof AuthenticatedSettingsChangePasswordRoute
@@ -508,11 +599,12 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedCameraRoute: typeof AuthenticatedCameraRoute
   AuthenticatedExploreRoute: typeof AuthenticatedExploreRoute
   AuthenticatedFeedRoute: typeof AuthenticatedFeedRoute
-  AuthenticatedLiveRoute: typeof AuthenticatedLiveRoute
+  AuthenticatedLiveRoute: typeof AuthenticatedLiveRouteWithChildren
   AuthenticatedNotificationsRoute: typeof AuthenticatedNotificationsRoute
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRouteWithChildren
   AuthenticatedUploadRoute: typeof AuthenticatedUploadRoute
+  AuthenticatedWalletRoute: typeof AuthenticatedWalletRoute
   AuthenticatedUUsernameRoute: typeof AuthenticatedUUsernameRouteWithChildren
 }
 
@@ -520,11 +612,12 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedCameraRoute: AuthenticatedCameraRoute,
   AuthenticatedExploreRoute: AuthenticatedExploreRoute,
   AuthenticatedFeedRoute: AuthenticatedFeedRoute,
-  AuthenticatedLiveRoute: AuthenticatedLiveRoute,
+  AuthenticatedLiveRoute: AuthenticatedLiveRouteWithChildren,
   AuthenticatedNotificationsRoute: AuthenticatedNotificationsRoute,
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRouteWithChildren,
   AuthenticatedUploadRoute: AuthenticatedUploadRoute,
+  AuthenticatedWalletRoute: AuthenticatedWalletRoute,
   AuthenticatedUUsernameRoute: AuthenticatedUUsernameRouteWithChildren,
 }
 
@@ -537,17 +630,8 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   VVideoIdRoute: VVideoIdRoute,
+  ApiPublicWebhooksStripeRoute: ApiPublicWebhooksStripeRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

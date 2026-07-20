@@ -1,12 +1,12 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Home, Compass, PlusSquare, Bell, User } from "lucide-react";
+import { Home, Radio, PlusSquare, Bell, User } from "lucide-react";
 import type { ReactNode } from "react";
 
-type Tab = { to: "/feed" | "/explore" | "/upload" | "/notifications" | "/profile"; label: string; icon: typeof Home; primary?: boolean };
+type Tab = { to: "/feed" | "/live" | "/upload" | "/notifications" | "/profile"; label: string; icon: typeof Home; primary?: boolean };
 const tabs: Tab[] = [
   { to: "/feed", label: "Home", icon: Home },
-  { to: "/explore", label: "Explore", icon: Compass },
-  { to: "/upload", label: "Upload", icon: PlusSquare, primary: true },
+  { to: "/live", label: "Live", icon: Radio },
+  { to: "/upload", label: "Create", icon: PlusSquare, primary: true },
   { to: "/notifications", label: "Inbox", icon: Bell },
   { to: "/profile", label: "Me", icon: User },
 ];
@@ -14,7 +14,10 @@ const tabs: Tab[] = [
 export function AppShell({ children }: { children: ReactNode }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const hideNav = pathname.startsWith("/feed"); // feed nav is overlaid; keep small floating bar
-  const fullscreen = pathname.startsWith("/camera");
+  const fullscreen =
+    pathname.startsWith("/camera") ||
+    pathname.startsWith("/live/host") ||
+    /^\/live\/[^/]+$/.test(pathname);
 
   if (fullscreen) {
     return <div className="min-h-screen bg-black text-foreground">{children}</div>;
