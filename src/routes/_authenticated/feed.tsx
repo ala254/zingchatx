@@ -8,6 +8,7 @@ import { ShareSheet, type PlayerSettings } from "@/components/share-sheet";
 import { Sparkles, Loader2 } from "lucide-react";
 import { Route as AuthRoute } from "../_authenticated/route";
 import type { FeedVideo } from "@/lib/videos";
+import { LiveRing } from "@/components/live-ring";
 
 export const Route = createFileRoute("/_authenticated/feed")({
   head: () => ({
