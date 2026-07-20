@@ -130,6 +130,35 @@ function RootComponent() {
     return () => sub.subscription.unsubscribe();
   }, [queryClient, router]);
 
+  // Live-notification in-app toast for followers when a creator goes live.
+  useEffect(() => {
+    let cancel = () => {};
+    (async () => {
+      const mod = await import("@/integrations/supabase/client");
+      const sb = mod.supabase;
+      const { data: u } = await sb.auth.getUser();
+      if (!u.user) return;
+      const uid = u.user.id;
+      const { toast } = await import("sonner");
+      const channel = sb
+        .channel(`live-notif-${uid}`)
+        .on(
+          "postgres_changes",
+          { event: "INSERT", schema: "public", table: "live_notifications", filter: `follower_id=eq.${uid}` },
+          async (payload) => {
+            const row = payload.new as { host_id: string; stream_id: string };
+            const { data: prof } = await sb.from("profiles").select("username").eq("id", row.host_id).maybeSingle();
+            toast(`@${prof?.username ?? "someone"} is live now`, {
+              action: { label: "Watch", onClick: () => router.navigate({ to: "/live/$streamId", params: { streamId: row.stream_id } }) },
+            });
+          },
+        )
+        .subscribe();
+      cancel = () => { sb.removeChannel(channel); };
+    })();
+    return () => cancel();
+  }, [router]);
+
   return (
     <QueryClientProvider client={queryClient}>
       <Outlet />

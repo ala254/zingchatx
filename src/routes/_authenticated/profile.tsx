@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Settings, LogOut, Grid3x3, Heart, Bookmark, Edit3, BadgeCheck } from "lucide-react";
+import { Settings, LogOut, Grid3x3, Heart, Bookmark, Edit3, BadgeCheck, Wallet, Radio } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Route as AuthRoute } from "../_authenticated/route";
 import { useNavigate } from "@tanstack/react-router";
@@ -126,12 +126,26 @@ function MyProfilePage() {
           <Stat label="Likes" value={counts?.likes ?? 0} />
         </div>
 
-        <Link
-          to="/settings/edit-profile"
-          className="mt-5 flex items-center gap-2 rounded-full border border-border bg-surface px-5 py-2 text-sm font-semibold hover:border-primary"
-        >
-          <Edit3 className="h-4 w-4" /> Edit profile
-        </Link>
+        <div className="mt-5 flex flex-wrap items-center justify-center gap-2">
+          <Link
+            to="/settings/edit-profile"
+            className="flex items-center gap-2 rounded-full border border-border bg-surface px-4 py-2 text-sm font-semibold hover:border-primary"
+          >
+            <Edit3 className="h-4 w-4" /> Edit
+          </Link>
+          <Link
+            to="/wallet"
+            className="flex items-center gap-2 rounded-full border border-border bg-surface px-4 py-2 text-sm font-semibold hover:border-primary"
+          >
+            <Wallet className="h-4 w-4 text-amber-400" /> Wallet
+          </Link>
+          <Link
+            to="/live/host"
+            className="flex items-center gap-2 rounded-full gradient-zing px-4 py-2 text-sm font-semibold text-zing-foreground shadow-zing"
+          >
+            <Radio className="h-4 w-4" /> Go Live
+          </Link>
+        </div>
       </div>
 
       <div className="mt-6 flex border-b border-border">

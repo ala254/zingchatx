@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Search, TrendingUp, Hash } from "lucide-react";
 import { UserAvatar } from "@/components/user-avatar";
+import { LiveRing } from "@/components/live-ring";
 
 export const Route = createFileRoute("/_authenticated/explore")({
   head: () => ({ meta: [{ title: "Explore — ZingChatX" }] }),
@@ -74,6 +75,9 @@ function ExplorePage() {
   return (
     <div className="mx-auto max-w-[480px] px-4 pt-4">
       <h1 className="font-display text-2xl font-bold">Explore</h1>
+
+      <div className="-mx-4"><LiveRing /></div>
+
 
       <label className="mt-4 flex items-center gap-2 rounded-full border border-border bg-surface px-4 py-2.5">
         <Search className="h-4 w-4 text-muted-foreground" />

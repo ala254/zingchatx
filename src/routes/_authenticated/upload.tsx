@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { takePendingCapture } from "@/lib/camera-capture-store";
 
-import { Upload, Video, X, Loader2, Hash, MapPin, Camera } from "lucide-react";
+import { Upload, Video, X, Loader2, Hash, MapPin, Camera, Radio } from "lucide-react";
 import { toast } from "sonner";
 import { Route as AuthRoute } from "../_authenticated/route";
 
@@ -134,12 +134,21 @@ function UploadPage() {
               <p className="mt-1 text-xs text-muted-foreground">MP4 / MOV / WebM · up to 100MB</p>
             </div>
           </button>
-          <Link
-            to="/camera"
-            className="flex w-full items-center justify-center gap-2 rounded-2xl border border-border bg-surface-elevated px-6 py-4 text-sm font-semibold"
-          >
-            <Camera className="h-5 w-5" /> Open ZingCam
-          </Link>
+          <div className="grid grid-cols-2 gap-3">
+            <Link
+              to="/camera"
+              className="flex flex-col items-center justify-center gap-1.5 rounded-2xl border border-border bg-surface-elevated px-4 py-4 text-sm font-semibold"
+            >
+              <Camera className="h-5 w-5" /> ZingCam
+            </Link>
+            <Link
+              to="/live/host"
+              className="relative flex flex-col items-center justify-center gap-1.5 overflow-hidden rounded-2xl gradient-zing px-4 py-4 text-sm font-semibold text-zing-foreground shadow-zing"
+            >
+              <Radio className="h-5 w-5" /> Go Live
+              <span className="absolute right-2 top-2 rounded-full bg-white/25 px-1.5 py-0.5 text-[9px] font-bold">NEW</span>
+            </Link>
+          </div>
           <input ref={fileInputRef} type="file" accept="video/*" className="hidden" onChange={(e) => pickFile(e.target.files?.[0])} />
 
         </div>
