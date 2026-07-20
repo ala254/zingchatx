@@ -71,12 +71,14 @@ function FeedPage() {
 
   return (
     <>
-      <div className="fixed top-0 left-1/2 z-30 -translate-x-1/2 px-4 pt-3" style={{ paddingTop: "calc(env(safe-area-inset-top, 0) + 0.75rem)" }}>
-        <div className="flex items-center gap-2 rounded-full bg-black/40 px-4 py-1.5 backdrop-blur-md">
+      <div className="fixed top-0 left-1/2 z-30 flex w-full max-w-[480px] -translate-x-1/2 flex-col gap-1 pt-3" style={{ paddingTop: "calc(env(safe-area-inset-top, 0) + 0.5rem)" }}>
+        <div className="mx-auto flex items-center gap-2 rounded-full bg-black/40 px-4 py-1.5 backdrop-blur-md">
           <Sparkles className="h-3.5 w-3.5 text-cyan-glow" />
           <span className="font-display text-sm font-semibold text-white">For You</span>
         </div>
+        <div className="pointer-events-auto"><LiveRing /></div>
       </div>
+
 
       <div
         ref={containerRef}
